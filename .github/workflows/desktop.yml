@@ -8,9 +8,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    name: Build Desktop JAR
-    runs-on: ubuntu-latest
+  build-windows:
+    name: Build Windows EXE
+    runs-on: windows-latest
     permissions:
       contents: write
 
@@ -33,110 +33,76 @@ jobs:
         working-directory: desktop
         run: gradle wrapper --gradle-version 8.7
 
-      - name: Build Desktop UberJar
+      - name: Create placeholder icon
+        shell: pwsh
+        run: |
+          $dir = "desktop/app/src/main/resources"
+          New-Item -ItemType Directory -Force -Path $dir | Out-Null
+          # Create a minimal valid ICO file (16x16, 1-bit) if not present
+          if (-not (Test-Path "$dir/icon.ico")) {
+            # Download a simple icon or create blank
+            $bytes = [byte[]]@(
+              0,0,1,0,1,0,16,16,0,0,1,0,32,0,104,4,0,0,22,0,0,0,
+              40,0,0,0,16,0,0,0,32,0,0,0,1,0,32,0,0,0,0,0,0,4,0,0,
+              0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+            )
+            # Pad to proper size
+            $icon = New-Object byte[] 1086
+            $icon[0]=0; $icon[1]=0; $icon[2]=1; $icon[3]=0; $icon[4]=1; $icon[5]=0
+            $icon[6]=16; $icon[7]=16; $icon[8]=0; $icon[9]=0; $icon[10]=1; $icon[11]=0
+            $icon[12]=32; $icon[13]=0; $icon[14]=64; $icon[15]=4; $icon[16]=0; $icon[17]=0
+            $icon[18]=22; $icon[19]=0; $icon[20]=0; $icon[21]=0
+            # BITMAPINFOHEADER
+            $icon[22]=40;$icon[26]=16;$icon[30]=32;$icon[34]=1;$icon[35]=0
+            $icon[36]=32;$icon[38]=0
+            [System.IO.File]::WriteAllBytes("$dir/icon.ico", $icon)
+            Write-Host "Created placeholder icon.ico"
+          }
+
+      - name: Build Windows EXE
         working-directory: desktop
-        run: ./gradlew :app:packageUberJarForCurrentOS --no-daemon
+        run: ./gradlew :app:packageExe --no-daemon --stacktrace
 
-      - name: Rename JAR to fixed name
+      - name: Find and rename EXE
+        shell: pwsh
         run: |
-          mkdir -p /tmp/release
-          cp desktop/app/build/compose/jars/*.jar /tmp/release/attendance-journal.jar
-          echo "JAR size: $(du -sh /tmp/release/attendance-journal.jar)"
-
-      - name: Create Windows installer script
-        run: |
-          cat > /tmp/release/install-windows.ps1 << 'PSEOF'
-          # Журнал посещаемости — Windows Auto-Installer
-          # Запустите: правая кнопка -> "Запустить с помощью PowerShell"
-
-          $ErrorActionPreference = "Stop"
-          $repo = "sadfsadfs345345/attendance-journal"
-          $installDir = "$env:LOCALAPPDATA\AttendanceJournal"
-          $jarPath = "$installDir\attendance-journal.jar"
-          $shortcutPath = "$env:USERPROFILE\Desktop\Журнал посещаемости.lnk"
-
-          Write-Host "=== Журнал посещаемости — Установка ==" -ForegroundColor Cyan
-
-          # Check Java
-          try {
-            $javaVersion = & java -version 2>&1
-            Write-Host "Java найдена: $javaVersion" -ForegroundColor Green
-          } catch {
-            Write-Host "Java не найдена. Скачиваю..." -ForegroundColor Yellow
-            $javaUrl = "https://download.java.net/java/GA/jdk17/0d483333a00540d886ef971e6f8f1cb1/35/GPL/openjdk-17_windows-x64_bin.zip"
-            $javaZip = "$env:TEMP\openjdk17.zip"
-            Invoke-WebRequest -Uri $javaUrl -OutFile $javaZip -UseBasicParsing
-            Expand-Archive -Path $javaZip -DestinationPath $installDir -Force
-            $env:Path += ";$installDir\jdk-17\bin"
-            Write-Host "Java установлена" -ForegroundColor Green
+          $exe = Get-ChildItem -Path "desktop/app/build/compose/binaries/main/exe/" -Filter "*.exe" -Recurse | Select-Object -First 1
+          if ($exe) {
+            Copy-Item $exe.FullName "AttendanceJournal-Setup.exe"
+            Write-Host "Found EXE: $($exe.FullName) ($([math]::Round($exe.Length/1MB, 1)) MB)"
+          } else {
+            Write-Error "EXE not found!"
+            Get-ChildItem -Path "desktop/app/build/" -Recurse | Select-Object FullName
+            exit 1
           }
 
-          # Create install dir
-          New-Item -ItemType Directory -Force -Path $installDir | Out-Null
-
-          # Download latest JAR
-          Write-Host "Скачиваю приложение..." -ForegroundColor Cyan
-          $releaseUrl = "https://api.github.com/repos/$repo/releases/latest"
-          $release = Invoke-RestMethod -Uri $releaseUrl -UseBasicParsing
-          $jarAsset = $release.assets | Where-Object { $_.name -eq "attendance-journal.jar" }
-          if (-not $jarAsset) {
-            $jarAsset = $release.assets | Where-Object { $_.name -like "*.jar" } | Select-Object -First 1
-          }
-          Invoke-WebRequest -Uri $jarAsset.browser_download_url -OutFile $jarPath -UseBasicParsing
-          Write-Host "Приложение скачано" -ForegroundColor Green
-
-          # Create desktop shortcut
-          Write-Host "Создаю ярлык на рабочем столе..." -ForegroundColor Cyan
-          $WS = New-Object -ComObject WScript.Shell
-          $SC = $WS.CreateShortcut($shortcutPath)
-          $SC.TargetPath = "javaw"
-          $SC.Arguments = "-jar `"$jarPath`""
-          $SC.WorkingDirectory = $installDir
-          $SC.Description = "Журнал посещаемости"
-          $SC.Save()
-
-          Write-Host "" 
-          Write-Host "Установка завершена!" -ForegroundColor Green
-          Write-Host "Ярлык создан на рабочем столе: Журнал посещаемости" -ForegroundColor Cyan
-          Write-Host "Нажмите Enter для выхода..."
-          Read-Host
-          PSEOF
-
-      - name: Upload artifacts
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: attendance-journal-desktop
-          path: |
-            /tmp/release/attendance-journal.jar
-            /tmp/release/install-windows.ps1
+          name: AttendanceJournal-Windows-Setup
+          path: AttendanceJournal-Setup.exe
           retention-days: 30
 
       - name: Get version tag
         if: github.event_name != 'pull_request'
         id: ver
-        run: echo "tag=desktop-v1.0.$(date +'%Y%m%d-%H%M')" >> $GITHUB_OUTPUT
+        shell: pwsh
+        run: |
+          $tag = "windows-v1.0." + (Get-Date -Format 'yyyyMMdd-HHmm')
+          echo "tag=$tag" >> $env:GITHUB_OUTPUT
 
-      - name: Create GitHub Release
+      - name: Publish GitHub Release
         if: github.event_name != 'pull_request'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.ver.outputs.tag }}
-          name: "Desktop Release ${{ steps.ver.outputs.tag }}"
+          name: "Windows EXE ${{ steps.ver.outputs.tag }}"
           body: |
-            ## 🖥️ Журнал посещаемости — Desktop (Windows/Linux/macOS)
+            ## 🖥️ Журнал посещаемости — Windows Установщик
 
-            ### Windows:
-            1. Скачайте `install-windows.ps1`
-            2. Правая кнопка → «Запустить с помощью PowerShell»
-            3. Скрипт установит Java (если нужно) и создаст ярлык на рабочем столе
-
-            ### Linux / macOS:
-            ```bash
-            java -jar attendance-journal.jar
-            ```
-          files: |
-            /tmp/release/attendance-journal.jar
-            /tmp/release/install-windows.ps1
+            1. Скачайте `AttendanceJournal-Setup.exe`
+            2. Запустите файл — установщик создаст ярлык на рабочем столе ✨
+          files: AttendanceJournal-Setup.exe
           make_latest: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

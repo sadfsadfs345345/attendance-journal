@@ -23,7 +23,7 @@ compose.desktop {
     application {
         mainClass = "com.attendance.desktop.MainKt"
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            targetFormats(TargetFormat.Exe, TargetFormat.Dmg, TargetFormat.Deb)
             packageName = "AttendanceJournal"
             packageVersion = "1.0.0"
             description = "Журнал посещаемости"
@@ -31,6 +31,10 @@ compose.desktop {
             windows {
                 menuGroup = "AttendanceJournal"
                 upgradeUuid = "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+                shortcut = true
+                dirChooser = true
+                perUserInstall = true
+                iconFile.set(project.file("src/main/resources/icon.ico"))
             }
         }
     }
