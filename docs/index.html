@@ -28,20 +28,10 @@
     h1 { font-size: 26px; font-weight: 700; color: #1a1a1a; margin-bottom: 8px; }
     .subtitle { color: #666; font-size: 15px; margin-bottom: 36px; line-height: 1.5; }
     .btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      width: 100%;
-      padding: 16px 24px;
-      border-radius: 14px;
-      font-size: 16px;
-      font-weight: 600;
-      text-decoration: none;
-      cursor: pointer;
-      border: none;
-      transition: transform 0.15s, box-shadow 0.15s;
-      margin-bottom: 10px;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; padding: 16px 24px; border-radius: 14px; font-size: 16px;
+      font-weight: 600; text-decoration: none; cursor: pointer; border: none;
+      transition: transform 0.15s, box-shadow 0.15s; margin-bottom: 10px;
     }
     .btn:active { transform: scale(0.97); }
     .btn-android { background: linear-gradient(135deg, #34A853, #0F9D58); color: #fff; box-shadow: 0 6px 20px rgba(52,168,83,0.4); }
@@ -62,7 +52,7 @@
     .tab.active { border-color: #1976D2; background: #e3f2fd; color: #1976D2; }
     .version-info { font-size: 12px; color: #aaa; margin-top: 20px; }
     #latest-version { font-weight: 600; color: #555; }
-    .loading { color: #aaa; font-size: 13px; padding: 12px; }
+    .loading { color: #aaa; font-size: 13px; padding: 8px 0; }
   </style>
 </head>
 <body>
@@ -79,7 +69,7 @@
 
   <!-- ANDROID -->
   <div id="android-section" style="display:none">
-    <a id="apk-btn" class="btn btn-android" href="#">
+    <a id="apk-btn" class="btn btn-android" href="https://github.com/sadfsadfs345345/attendance-journal/releases/latest/download/app-debug.apk">
       <span>📲</span> Скачать APK для Android
     </a>
     <div class="steps">
@@ -97,11 +87,11 @@
     <a id="ps1-btn" class="btn btn-windows" href="#" download="install-windows.ps1">
       <span>⚡</span> Скачать авто-установщик (Windows)
     </a>
-    <div id="ps1-loading" class="loading">⏳ Загрузка ссылки...</div>
+    <div id="ps1-status" class="loading">⏳ Поиск файла...</div>
     <div class="steps">
       <div class="steps-title">📖 Как запустить:</div>
-      <div class="step"><div class="step-num">1</div><span>Скачайте файл <b>install-windows.ps1</b></span></div>
-      <div class="step"><div class="step-num">2</div><span>Правая кнопка мыши → «Запустить с помощью PowerShell»</span></div>
+      <div class="step"><div class="step-num">1</div><span>Скачайте <b>install-windows.ps1</b></span></div>
+      <div class="step"><div class="step-num">2</div><span>Правая кнопка → «Запустить с помощью PowerShell»</span></div>
       <div class="step"><div class="step-num">3</div><span>Скрипт скачает Java (если нужно) и создаёт ярлык на рабочем столе ✨</span></div>
     </div>
     <hr class="divider">
@@ -110,7 +100,7 @@
     </a>
   </div>
 
-  <!-- LINUX/MACOS -->
+  <!-- LINUX / MACOS -->
   <div id="linux-section" style="display:none">
     <a id="jar-linux-btn" class="btn btn-linux" href="https://github.com/sadfsadfs345345/attendance-journal/releases" target="_blank">
       📦 Скачать JAR (последняя версия)
@@ -123,41 +113,46 @@
   </div>
 
   <div class="version-info">
-    <span id="latest-version">загрузка...</span> &bull;
+    Версия: <span id="latest-version">загрузка...</span> &bull;
     <a href="https://github.com/sadfsadfs345345/attendance-journal" target="_blank" style="color:#1976D2">Исходный код</a>
   </div>
 </div>
 
 <script>
-  const REPO = 'sadfsadfs345345/attendance-journal';
-  const API  = 'https://api.github.com/repos/' + REPO + '/releases';
+  var REPO = 'sadfsadfs345345/attendance-journal';
 
   function detectPlatform() {
-    const ua = navigator.userAgent.toLowerCase();
+    var ua = navigator.userAgent.toLowerCase();
     if (/android/.test(ua)) return 'android';
     if (/win/.test(ua))     return 'windows';
     return 'linux';
   }
 
   function showPlatform(name) {
-    ['android', 'windows', 'linux'].forEach(p => {
-      const el = document.getElementById(p + '-section');
+    ['android', 'windows', 'linux'].forEach(function(p) {
+      var el = document.getElementById(p + '-section');
       if (el) el.style.display = (p === name) ? 'block' : 'none';
     });
-    document.querySelectorAll('.tab').forEach((t, i) => {
+    document.querySelectorAll('.tab').forEach(function(t, i) {
       t.classList.toggle('active', ['android','windows','linux'][i] === name);
     });
   }
 
-  // Fetch ALL releases and find the right asset in each
-  fetch(API + '?per_page=20')
-    .then(r => r.json())
-    .then(releases => {
-      let apkUrl = null, ps1Url = null, jarUrl = null;
-      let androidVer = '', desktopVer = '';
+  // Fetch all releases and find assets by name
+  fetch('https://api.github.com/repos/' + REPO + '/releases?per_page=20')
+    .then(function(r) { return r.json(); })
+    .then(function(releases) {
+      var apkUrl = null;
+      var ps1Url = null;
+      var jarUrl = null;
+      var androidVer = '';
+      var desktopVer = '';
 
-      for (const rel of releases) {
-        for (const asset of (rel.assets || [])) {
+      for (var i = 0; i < releases.length; i++) {
+        var rel = releases[i];
+        var assets = rel.assets || [];
+        for (var j = 0; j < assets.length; j++) {
+          var asset = assets[j];
           if (!apkUrl && asset.name.endsWith('.apk')) {
             apkUrl = asset.browser_download_url;
             androidVer = rel.tag_name;
@@ -173,34 +168,37 @@
         if (apkUrl && ps1Url && jarUrl) break;
       }
 
-      // APK button
+      // Update APK button
       if (apkUrl) {
         document.getElementById('apk-btn').href = apkUrl;
       }
 
-      // Windows PS1 button
-      const ps1Loading = document.getElementById('ps1-loading');
+      // Update Windows button
+      var ps1Status = document.getElementById('ps1-status');
       if (ps1Url) {
         document.getElementById('ps1-btn').href = ps1Url;
-        ps1Loading.style.display = 'none';
+        ps1Status.style.display = 'none';
       } else {
-        ps1Loading.textContent = '⚠️ Файл пока собирается — загляните через немного';
+        ps1Status.textContent = '⚠️ Файл ещё собирается — загляните через немного';
       }
 
-      // JAR buttons
+      // Update JAR buttons
       if (jarUrl) {
         document.getElementById('jar-btn').href = jarUrl;
         document.getElementById('jar-linux-btn').href = jarUrl;
       }
 
-      // Version display
+      // Show version
+      var parts = [];
+      if (androidVer) parts.push('Android ' + androidVer);
+      if (desktopVer) parts.push('Desktop ' + desktopVer);
       document.getElementById('latest-version').textContent =
-        [аndroidVer && ('Android ' + androidVer), desktopVer && ('Desktop ' + desktopVer)]
-        .filter(Boolean).join(' • ') || 'см. Releases';
+        parts.length ? parts.join(' • ') : 'см. Releases';
     })
-    .catch(() => {
+    .catch(function() {
       document.getElementById('latest-version').textContent = 'см. Releases';
-      document.getElementById('ps1-loading').style.display = 'none';
+      var ps1Status = document.getElementById('ps1-status');
+      if (ps1Status) ps1Status.style.display = 'none';
     });
 
   showPlatform(detectPlatform());
