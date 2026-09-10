@@ -5,6 +5,7 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:   # ручной запуск из вкладки Actions
 
 jobs:
   build:
@@ -23,12 +24,13 @@ jobs:
           cache: gradle
 
       - name: Grant execute permission for gradlew
-        run: chmod +x android/gradlew
-        working-directory: .
+        run: chmod +x gradlew
+        working-directory: android
 
       - name: Create dummy google-services.json
+        working-directory: android/app
         run: |
-          cat > android/app/google-services.json << 'EOF'
+          cat > google-services.json << 'GSJSON'
           {
             "project_info": {
               "project_number": "000000000000",
@@ -46,10 +48,10 @@ jobs:
             }],
             "configuration_version": "1"
           }
-          EOF
+          GSJSON
 
       - name: Build Debug APK
-        run: ./gradlew assembleDebug --no-daemon
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
         working-directory: android
 
       - name: Upload APK artifact
@@ -60,10 +62,10 @@ jobs:
           retention-days: 30
 
   release:
-    name: Create Release with APK
+    name: Publish GitHub Release
     runs-on: ubuntu-latest
     needs: build
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.event_name != 'pull_request'
 
     steps:
       - name: Checkout code
@@ -77,11 +79,13 @@ jobs:
           cache: gradle
 
       - name: Grant execute permission for gradlew
-        run: chmod +x android/gradlew
+        run: chmod +x gradlew
+        working-directory: android
 
       - name: Create dummy google-services.json
+        working-directory: android/app
         run: |
-          cat > android/app/google-services.json << 'EOF'
+          cat > google-services.json << 'GSJSON'
           {
             "project_info": {
               "project_number": "000000000000",
@@ -99,17 +103,17 @@ jobs:
             }],
             "configuration_version": "1"
           }
-          EOF
+          GSJSON
 
       - name: Build Debug APK
         run: ./gradlew assembleDebug --no-daemon
         working-directory: android
 
-      - name: Get version code
+      - name: Get version tag
         id: version
-        run: echo "tag=v1.0.$(date +'%Y%m%d%H%M')" >> $GITHUB_OUTPUT
+        run: echo "tag=v1.0.$(date +'%Y%m%d-%H%M')" >> $GITHUB_OUTPUT
 
-      - name: Create GitHub Release
+      - name: Create GitHub Release with APK
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.version.outputs.tag }}
@@ -117,12 +121,15 @@ jobs:
           body: |
             ## 📋 Журнал посещаемости
 
-            ### Скачать APK
-            Нажмите `app-debug.apk` ниже и установите на устройстве.
+            ### 📱 Установка на Android
+            1. Скачайте `app-debug.apk` ниже
+            2. Откройте файл, разрешите установку
+            3. Иконка появится на рабочем столе ✨
 
-            > **Внимание:** Это debug-сборка. Для прода используйте release-сборку с подписью.
+            > это debug-сборка.
           files: android/app/build/outputs/apk/debug/app-debug.apk
           draft: false
           prerelease: false
+          make_latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
