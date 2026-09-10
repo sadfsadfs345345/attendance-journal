@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.sp
 
 enum class UserRole { HEADMAN, TEACHER, CURATOR, DIRECTOR }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(onLogin: (UserRole, String) -> Unit) {
     var login by remember { mutableStateOf("") }
