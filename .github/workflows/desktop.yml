@@ -11,6 +11,8 @@ jobs:
   build:
     name: Build Desktop JAR
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout
@@ -33,11 +35,108 @@ jobs:
 
       - name: Build Desktop UberJar
         working-directory: desktop
-        run: ./gradlew :app:packageUberJarForCurrentOS --no-daemon --stacktrace
+        run: ./gradlew :app:packageUberJarForCurrentOS --no-daemon
 
-      - name: Upload Desktop JAR
+      - name: Rename JAR to fixed name
+        run: |
+          mkdir -p /tmp/release
+          cp desktop/app/build/compose/jars/*.jar /tmp/release/attendance-journal.jar
+          echo "JAR size: $(du -sh /tmp/release/attendance-journal.jar)"
+
+      - name: Create Windows installer script
+        run: |
+          cat > /tmp/release/install-windows.ps1 << 'PSEOF'
+          # Журнал посещаемости — Windows Auto-Installer
+          # Запустите: правая кнопка -> "Запустить с помощью PowerShell"
+
+          $ErrorActionPreference = "Stop"
+          $repo = "sadfsadfs345345/attendance-journal"
+          $installDir = "$env:LOCALAPPDATA\AttendanceJournal"
+          $jarPath = "$installDir\attendance-journal.jar"
+          $shortcutPath = "$env:USERPROFILE\Desktop\Журнал посещаемости.lnk"
+
+          Write-Host "=== Журнал посещаемости — Установка ==" -ForegroundColor Cyan
+
+          # Check Java
+          try {
+            $javaVersion = & java -version 2>&1
+            Write-Host "Java найдена: $javaVersion" -ForegroundColor Green
+          } catch {
+            Write-Host "Java не найдена. Скачиваю..." -ForegroundColor Yellow
+            $javaUrl = "https://download.java.net/java/GA/jdk17/0d483333a00540d886ef971e6f8f1cb1/35/GPL/openjdk-17_windows-x64_bin.zip"
+            $javaZip = "$env:TEMP\openjdk17.zip"
+            Invoke-WebRequest -Uri $javaUrl -OutFile $javaZip -UseBasicParsing
+            Expand-Archive -Path $javaZip -DestinationPath $installDir -Force
+            $env:Path += ";$installDir\jdk-17\bin"
+            Write-Host "Java установлена" -ForegroundColor Green
+          }
+
+          # Create install dir
+          New-Item -ItemType Directory -Force -Path $installDir | Out-Null
+
+          # Download latest JAR
+          Write-Host "Скачиваю приложение..." -ForegroundColor Cyan
+          $releaseUrl = "https://api.github.com/repos/$repo/releases/latest"
+          $release = Invoke-RestMethod -Uri $releaseUrl -UseBasicParsing
+          $jarAsset = $release.assets | Where-Object { $_.name -eq "attendance-journal.jar" }
+          if (-not $jarAsset) {
+            $jarAsset = $release.assets | Where-Object { $_.name -like "*.jar" } | Select-Object -First 1
+          }
+          Invoke-WebRequest -Uri $jarAsset.browser_download_url -OutFile $jarPath -UseBasicParsing
+          Write-Host "Приложение скачано" -ForegroundColor Green
+
+          # Create desktop shortcut
+          Write-Host "Создаю ярлык на рабочем столе..." -ForegroundColor Cyan
+          $WS = New-Object -ComObject WScript.Shell
+          $SC = $WS.CreateShortcut($shortcutPath)
+          $SC.TargetPath = "javaw"
+          $SC.Arguments = "-jar `"$jarPath`""
+          $SC.WorkingDirectory = $installDir
+          $SC.Description = "Журнал посещаемости"
+          $SC.Save()
+
+          Write-Host "" 
+          Write-Host "Установка завершена!" -ForegroundColor Green
+          Write-Host "Ярлык создан на рабочем столе: Журнал посещаемости" -ForegroundColor Cyan
+          Write-Host "Нажмите Enter для выхода..."
+          Read-Host
+          PSEOF
+
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: attendance-journal-desktop
-          path: desktop/app/build/compose/jars/*.jar
+          path: |
+            /tmp/release/attendance-journal.jar
+            /tmp/release/install-windows.ps1
           retention-days: 30
+
+      - name: Get version tag
+        if: github.event_name != 'pull_request'
+        id: ver
+        run: echo "tag=desktop-v1.0.$(date +'%Y%m%d-%H%M')" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        if: github.event_name != 'pull_request'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.ver.outputs.tag }}
+          name: "Desktop Release ${{ steps.ver.outputs.tag }}"
+          body: |
+            ## 🖥️ Журнал посещаемости — Desktop (Windows/Linux/macOS)
+
+            ### Windows:
+            1. Скачайте `install-windows.ps1`
+            2. Правая кнопка → «Запустить с помощью PowerShell»
+            3. Скрипт установит Java (если нужно) и создаст ярлык на рабочем столе
+
+            ### Linux / macOS:
+            ```bash
+            java -jar attendance-journal.jar
+            ```
+          files: |
+            /tmp/release/attendance-journal.jar
+            /tmp/release/install-windows.ps1
+          make_latest: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
