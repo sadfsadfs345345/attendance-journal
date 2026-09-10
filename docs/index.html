@@ -9,20 +9,13 @@
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: linear-gradient(135deg, #1976D2 0%, #00897B 100%);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
+      min-height: 100vh; display: flex; align-items: center;
+      justify-content: center; padding: 20px;
     }
     .card {
-      background: #fff;
-      border-radius: 24px;
-      padding: 48px 40px;
-      max-width: 520px;
-      width: 100%;
-      box-shadow: 0 32px 80px rgba(0,0,0,0.25);
-      text-align: center;
+      background: #fff; border-radius: 24px; padding: 48px 40px;
+      max-width: 520px; width: 100%;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.25); text-align: center;
     }
     .icon { font-size: 64px; margin-bottom: 12px; }
     h1 { font-size: 26px; font-weight: 700; color: #1a1a1a; margin-bottom: 8px; }
@@ -34,25 +27,25 @@
       transition: transform 0.15s, box-shadow 0.15s; margin-bottom: 10px;
     }
     .btn:active { transform: scale(0.97); }
-    .btn-android { background: linear-gradient(135deg, #34A853, #0F9D58); color: #fff; box-shadow: 0 6px 20px rgba(52,168,83,0.4); }
-    .btn-android:hover { box-shadow: 0 10px 28px rgba(52,168,83,0.5); }
-    .btn-windows { background: linear-gradient(135deg, #0078D4, #106EBE); color: #fff; box-shadow: 0 6px 20px rgba(0,120,212,0.4); }
-    .btn-windows:hover { box-shadow: 0 10px 28px rgba(0,120,212,0.5); }
-    .btn-linux { background: linear-gradient(135deg, #E95420, #C43F15); color: #fff; box-shadow: 0 6px 20px rgba(233,84,32,0.4); }
-    .btn-outline { background: transparent; border: 2px solid #e0e0e0; color: #444; }
-    .btn-outline:hover { background: #f5f5f5; }
-    .steps { background: #f8f9fa; border-radius: 14px; padding: 20px; text-align: left; margin-top: 24px; }
-    .steps-title { font-weight: 600; color: #333; margin-bottom: 12px; font-size: 14px; }
-    .step { display: flex; gap: 10px; margin-bottom: 8px; font-size: 13px; color: #555; line-height: 1.5; }
-    .step-num { background: #1976D2; color: #fff; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
-    .warning { background: #FFF8E1; border: 1px solid #FFE082; border-radius: 10px; padding: 12px 16px; font-size: 13px; color: #7c6000; text-align: left; margin-top: 16px; line-height: 1.5; }
-    .divider { border: none; border-top: 1px solid #eee; margin: 24px 0; }
-    .tab-row { display: flex; gap: 8px; margin-bottom: 20px; }
-    .tab { flex: 1; padding: 10px; border-radius: 10px; border: 2px solid #e0e0e0; background: #fff; cursor: pointer; font-size: 13px; font-weight: 600; color: #666; transition: all 0.15s; }
-    .tab.active { border-color: #1976D2; background: #e3f2fd; color: #1976D2; }
-    .version-info { font-size: 12px; color: #aaa; margin-top: 20px; }
-    #latest-version { font-weight: 600; color: #555; }
-    .loading { color: #aaa; font-size: 13px; padding: 8px 0; }
+    .btn-android { background: linear-gradient(135deg,#34A853,#0F9D58); color:#fff; box-shadow:0 6px 20px rgba(52,168,83,.4); }
+    .btn-android:hover { box-shadow:0 10px 28px rgba(52,168,83,.5); }
+    .btn-windows { background: linear-gradient(135deg,#0078D4,#106EBE); color:#fff; box-shadow:0 6px 20px rgba(0,120,212,.4); }
+    .btn-windows:hover { box-shadow:0 10px 28px rgba(0,120,212,.5); }
+    .btn-linux { background: linear-gradient(135deg,#E95420,#C43F15); color:#fff; box-shadow:0 6px 20px rgba(233,84,32,.4); }
+    .btn-outline { background:transparent; border:2px solid #e0e0e0; color:#444; }
+    .btn-outline:hover { background:#f5f5f5; }
+    .steps { background:#f8f9fa; border-radius:14px; padding:20px; text-align:left; margin-top:24px; }
+    .steps-title { font-weight:600; color:#333; margin-bottom:12px; font-size:14px; }
+    .step { display:flex; gap:10px; margin-bottom:8px; font-size:13px; color:#555; line-height:1.5; }
+    .step-num { background:#1976D2; color:#fff; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; margin-top:1px; }
+    .warning { background:#FFF8E1; border:1px solid #FFE082; border-radius:10px; padding:12px 16px; font-size:13px; color:#7c6000; text-align:left; margin-top:16px; line-height:1.5; }
+    .divider { border:none; border-top:1px solid #eee; margin:24px 0; }
+    .tab-row { display:flex; gap:8px; margin-bottom:20px; }
+    .tab { flex:1; padding:10px; border-radius:10px; border:2px solid #e0e0e0; background:#fff; cursor:pointer; font-size:13px; font-weight:600; color:#666; transition:all .15s; }
+    .tab.active { border-color:#1976D2; background:#e3f2fd; color:#1976D2; }
+    .version-info { font-size:12px; color:#aaa; margin-top:20px; }
+    #latest-version { font-weight:600; color:#555; }
+    .status-msg { font-size:13px; color:#aaa; padding:8px 0; }
   </style>
 </head>
 <body>
@@ -75,40 +68,37 @@
     <div class="steps">
       <div class="steps-title">📖 Как установить:</div>
       <div class="step"><div class="step-num">1</div><span>Нажмите кнопку — APK скачается автоматически</span></div>
-      <div class="step"><div class="step-num">2</div><span>Откройте файл из уведомления или папки «Загрузки»</span></div>
+      <div class="step"><div class="step-num">2</div><span>Откройте файл из папки «Загрузки»</span></div>
       <div class="step"><div class="step-num">3</div><span>Если появится предупреждение — нажмите «Разрешить» → «Установить»</span></div>
-      <div class="step"><div class="step-num">4</div><span>Иконка «Журнал» появится на рабочем столе ✨</span></div>
+      <div class="step"><div class="step-num">4</div><span>Иконка появится на рабочем столе ✨</span></div>
     </div>
-    <div class="warning">⚠️ Андроид может спросить разрешение для установки из неизвестных источников. Нажмите «Разрешить» — это безопасно.</div>
+    <div class="warning">⚠️ Андроид может спросить разрешение для установки из неизвестных источников — это безопасно.</div>
   </div>
 
   <!-- WINDOWS -->
   <div id="windows-section" style="display:none">
-    <a id="ps1-btn" class="btn btn-windows" href="#" download="install-windows.ps1">
-      <span>⚡</span> Скачать авто-установщик (Windows)
+    <a id="exe-btn" class="btn btn-windows" href="https://github.com/sadfsadfs345345/attendance-journal/releases">
+      <span>📥</span> <span id="exe-btn-text">Загрузка...</span>
     </a>
-    <div id="ps1-status" class="loading">⏳ Поиск файла...</div>
+    <div id="exe-status" class="status-msg">⏳ Поиск файла...</div>
     <div class="steps">
-      <div class="steps-title">📖 Как запустить:</div>
-      <div class="step"><div class="step-num">1</div><span>Скачайте <b>install-windows.ps1</b></span></div>
-      <div class="step"><div class="step-num">2</div><span>Правая кнопка → «Запустить с помощью PowerShell»</span></div>
-      <div class="step"><div class="step-num">3</div><span>Скрипт скачает Java (если нужно) и создаёт ярлык на рабочем столе ✨</span></div>
+      <div class="steps-title">📖 Как установить:</div>
+      <div class="step"><div class="step-num">1</div><span>Скачайте <b>AttendanceJournal-Setup.exe</b></span></div>
+      <div class="step"><div class="step-num">2</div><span>Запустите файл — установщик сам всё сделает ✨</span></div>
+      <div class="step"><div class="step-num">3</div><span>Ярлык «Журнал посещаемости» появится на рабочем столе</span></div>
     </div>
-    <hr class="divider">
-    <a id="jar-btn" class="btn btn-outline" href="https://github.com/sadfsadfs345345/attendance-journal/releases" target="_blank">
-      📦 Все файлы выпуска (GitHub Releases)
-    </a>
+    <div class="warning">⚠️ Windows SmartScreen может предупредить об неизвестном издателе. Нажмите «Подробнее» → «Всё равно запустить» — это безопасно.</div>
   </div>
 
   <!-- LINUX / MACOS -->
   <div id="linux-section" style="display:none">
-    <a id="jar-linux-btn" class="btn btn-linux" href="https://github.com/sadfsadfs345345/attendance-journal/releases" target="_blank">
+    <a id="jar-btn" class="btn btn-linux" href="https://github.com/sadfsadfs345345/attendance-journal/releases" target="_blank">
       📦 Скачать JAR (последняя версия)
     </a>
     <div class="steps">
       <div class="steps-title">📖 Запуск через терминал:</div>
       <div class="step"><div class="step-num">1</div><span>Java 17+: <code>sudo apt install openjdk-17-jdk</code></span></div>
-      <div class="step"><div class="step-num">2</div><span>Скачайте JAR из Releases и запустите: <code>java -jar attendance-journal.jar</code></span></div>
+      <div class="step"><div class="step-num">2</div><span>Скачайте JAR и запустите: <code>java -jar attendance-journal.jar</code></span></div>
     </div>
   </div>
 
@@ -124,12 +114,12 @@
   function detectPlatform() {
     var ua = navigator.userAgent.toLowerCase();
     if (/android/.test(ua)) return 'android';
-    if (/win/.test(ua))     return 'windows';
+    if (/win/.test(ua)) return 'windows';
     return 'linux';
   }
 
   function showPlatform(name) {
-    ['android', 'windows', 'linux'].forEach(function(p) {
+    ['android','windows','linux'].forEach(function(p) {
       var el = document.getElementById(p + '-section');
       if (el) el.style.display = (p === name) ? 'block' : 'none';
     });
@@ -138,67 +128,55 @@
     });
   }
 
-  // Fetch all releases and find assets by name
   fetch('https://api.github.com/repos/' + REPO + '/releases?per_page=20')
     .then(function(r) { return r.json(); })
     .then(function(releases) {
-      var apkUrl = null;
-      var ps1Url = null;
-      var jarUrl = null;
-      var androidVer = '';
-      var desktopVer = '';
+      var apkUrl = null, exeUrl = null, jarUrl = null;
+      var androidVer = '', windowsVer = '';
 
       for (var i = 0; i < releases.length; i++) {
         var rel = releases[i];
         var assets = rel.assets || [];
         for (var j = 0; j < assets.length; j++) {
-          var asset = assets[j];
-          if (!apkUrl && asset.name.endsWith('.apk')) {
-            apkUrl = asset.browser_download_url;
-            androidVer = rel.tag_name;
+          var a = assets[j];
+          if (!apkUrl && a.name.endsWith('.apk')) {
+            apkUrl = a.browser_download_url; androidVer = rel.tag_name;
           }
-          if (!ps1Url && asset.name === 'install-windows.ps1') {
-            ps1Url = asset.browser_download_url;
-            desktopVer = rel.tag_name;
+          if (!exeUrl && a.name.endsWith('.exe')) {
+            exeUrl = a.browser_download_url; windowsVer = rel.tag_name;
           }
-          if (!jarUrl && asset.name.endsWith('.jar')) {
-            jarUrl = asset.browser_download_url;
+          if (!jarUrl && a.name.endsWith('.jar')) {
+            jarUrl = a.browser_download_url;
           }
         }
-        if (apkUrl && ps1Url && jarUrl) break;
+        if (apkUrl && exeUrl && jarUrl) break;
       }
 
-      // Update APK button
-      if (apkUrl) {
-        document.getElementById('apk-btn').href = apkUrl;
-      }
+      if (apkUrl) document.getElementById('apk-btn').href = apkUrl;
 
-      // Update Windows button
-      var ps1Status = document.getElementById('ps1-status');
-      if (ps1Url) {
-        document.getElementById('ps1-btn').href = ps1Url;
-        ps1Status.style.display = 'none';
+      var exeStatus = document.getElementById('exe-status');
+      var exeBtnText = document.getElementById('exe-btn-text');
+      if (exeUrl) {
+        document.getElementById('exe-btn').href = exeUrl;
+        document.getElementById('exe-btn').setAttribute('download', 'AttendanceJournal-Setup.exe');
+        exeBtnText.textContent = 'Скачать AttendanceJournal-Setup.exe';
+        exeStatus.style.display = 'none';
       } else {
-        ps1Status.textContent = '⚠️ Файл ещё собирается — загляните через немного';
+        exeBtnText.textContent = 'Смотреть все выпуски';
+        exeStatus.textContent = '⏳ EXE сейчас собирается — загляните через 10 мин';
       }
 
-      // Update JAR buttons
-      if (jarUrl) {
-        document.getElementById('jar-btn').href = jarUrl;
-        document.getElementById('jar-linux-btn').href = jarUrl;
-      }
+      if (jarUrl) document.getElementById('jar-btn').href = jarUrl;
 
-      // Show version
       var parts = [];
       if (androidVer) parts.push('Android ' + androidVer);
-      if (desktopVer) parts.push('Desktop ' + desktopVer);
-      document.getElementById('latest-version').textContent =
-        parts.length ? parts.join(' • ') : 'см. Releases';
+      if (windowsVer) parts.push('Windows ' + windowsVer);
+      document.getElementById('latest-version').textContent = parts.length ? parts.join(' • ') : 'см. Releases';
     })
     .catch(function() {
       document.getElementById('latest-version').textContent = 'см. Releases';
-      var ps1Status = document.getElementById('ps1-status');
-      if (ps1Status) ps1Status.style.display = 'none';
+      var s = document.getElementById('exe-status');
+      if (s) s.style.display = 'none';
     });
 
   showPlatform(detectPlatform());
