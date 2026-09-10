@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Base application theme -->
     <style name="Theme.AttendanceJournal" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:windowBackground">@android:color/white</item>
-        <item name="android:statusBarColor">#1976D2</item>
     </style>
 </resources>

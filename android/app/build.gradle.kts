@@ -2,9 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp)
-    // alias(libs.plugins.google.services) // uncomment after adding real google-services.json
+    alias(libs.plugins.kotlin.kapt)
 }
 
 android {
@@ -21,7 +19,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = true
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -46,6 +44,7 @@ android {
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
@@ -55,38 +54,12 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.icons.extended)
     implementation(libs.androidx.navigation.compose)
-
-    // Hilt DI
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
-    implementation(libs.hilt.navigation.compose)
-    implementation(libs.hilt.work)
-    ksp(libs.androidx.hilt.compiler)
+    implementation(libs.gson)
 
     // Room
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
-    ksp(libs.room.compiler)
-
-    // Retrofit + Moshi
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.moshi)
-    implementation(libs.moshi.kotlin)
-    implementation(libs.moshi.adapters)
-    implementation(libs.okhttp.logging)
-
-    // Coroutines
-    implementation(libs.coroutines.android)
-
-    // DataStore
-    implementation(libs.datastore.preferences)
-
-    // WorkManager
-    implementation(libs.workmanager.ktx)
-
-    // Firebase (commented out until google-services.json is added)
-    // implementation(platform(libs.firebase.bom))
-    // implementation(libs.firebase.messaging)
+    kapt(libs.room.compiler)
 
     debugImplementation(libs.androidx.ui.tooling)
 }
