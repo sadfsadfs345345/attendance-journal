@@ -23,57 +23,40 @@ jobs:
           distribution: 'temurin'
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Install Android SDK components
         run: |
-          sdkmanager --install \
-            "platforms;android-35" \
-            "build-tools;34.0.0" \
-            "platform-tools"
-
-      - name: Accept Android SDK licenses
-        run: yes | sdkmanager --licenses || true
-
-      - name: Install Gradle 8.7
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: '8.7'
-
-      - name: Generate Gradle Wrapper
-        working-directory: android
-        run: gradle wrapper --gradle-version 8.7
+          # Use pre-installed Android SDK from GitHub runner
+          echo "ANDROID_HOME is: $ANDROID_HOME"
+          ls $ANDROID_HOME/cmdline-tools/ || echo "No cmdline-tools dir"
+          # Accept all licenses
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses 2>&1 | tail -3 || true
+          # Install required API level
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-35" "build-tools;34.0.0" 2>&1 | tail -5
+          # Create local.properties so Gradle can find the SDK
+          echo "sdk.dir=$ANDROID_HOME" > android/local.properties
+          echo "Created local.properties with sdk.dir=$ANDROID_HOME"
 
       - name: Create dummy google-services.json
         working-directory: android/app
         run: |
-          cat > google-services.json << 'GSJSON'
-          {
-            "project_info": {
-              "project_number": "000000000000",
-              "project_id": "attendance-demo",
-              "storage_bucket": "attendance-demo.appspot.com"
-            },
-            "client": [{
-              "client_info": {
-                "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
-                "android_client_info": { "package_name": "com.attendance.app" }
-              },
-              "oauth_client": [],
-              "api_key": [{ "current_key": "PLACEHOLDER" }],
-              "services": { "appinvite_service": { "other_platform_oauth_client": [] } }
-            }],
-            "configuration_version": "1"
-          }
-          GSJSON
+          printf '{\n  "project_info": {"project_number": "000000000000","project_id": "attendance-demo","storage_bucket": "attendance-demo.appspot.com"},\n  "client": [{"client_info": {"mobilesdk_app_id": "1:000000000000:android:0000000000000000","android_client_info": {"package_name": "com.attendance.app"}},"oauth_client": [],"api_key": [{"current_key": "PLACEHOLDER"}],"services": {"appinvite_service": {"other_platform_oauth_client": []}}}],\n  "configuration_version": "1"\n}' > google-services.json
+
+      - name: Install Gradle & generate wrapper
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.7'
+
+      - name: Generate Gradle wrapper
+        working-directory: android
+        run: gradle wrapper --gradle-version 8.7
 
       - name: Build Debug APK
         working-directory: android
-        env:
-          ANDROID_HOME: ${{ env.ANDROID_HOME }}
-        run: ./gradlew assembleDebug --no-daemon --stacktrace 2>&1 | tail -100
+        run: |
+          chmod +x ./gradlew
+          ./gradlew assembleDebug --no-daemon --stacktrace 2>&1
 
-      - name: Upload APK
+      - name: Upload APK artifact
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: app-debug-apk
@@ -97,53 +80,30 @@ jobs:
           distribution: 'temurin'
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Install Android SDK components
         run: |
-          sdkmanager --install \
-            "platforms;android-35" \
-            "build-tools;34.0.0" \
-            "platform-tools"
-
-      - name: Accept Android SDK licenses
-        run: yes | sdkmanager --licenses || true
-
-      - name: Install Gradle 8.7
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: '8.7'
-
-      - name: Generate Gradle Wrapper
-        working-directory: android
-        run: gradle wrapper --gradle-version 8.7
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses 2>&1 | tail -3 || true
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-35" "build-tools;34.0.0" 2>&1 | tail -5
+          echo "sdk.dir=$ANDROID_HOME" > android/local.properties
 
       - name: Create dummy google-services.json
         working-directory: android/app
         run: |
-          cat > google-services.json << 'GSJSON'
-          {
-            "project_info": {
-              "project_number": "000000000000",
-              "project_id": "attendance-demo",
-              "storage_bucket": "attendance-demo.appspot.com"
-            },
-            "client": [{
-              "client_info": {
-                "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
-                "android_client_info": { "package_name": "com.attendance.app" }
-              },
-              "oauth_client": [],
-              "api_key": [{ "current_key": "PLACEHOLDER" }],
-              "services": { "appinvite_service": { "other_platform_oauth_client": [] } }
-            }],
-            "configuration_version": "1"
-          }
-          GSJSON
+          printf '{\n  "project_info": {"project_number": "000000000000","project_id": "attendance-demo","storage_bucket": "attendance-demo.appspot.com"},\n  "client": [{"client_info": {"mobilesdk_app_id": "1:000000000000:android:0000000000000000","android_client_info": {"package_name": "com.attendance.app"}},"oauth_client": [],"api_key": [{"current_key": "PLACEHOLDER"}],"services": {"appinvite_service": {"other_platform_oauth_client": []}}}],\n  "configuration_version": "1"\n}' > google-services.json
+
+      - name: Install Gradle & generate wrapper
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.7'
+
+      - name: Generate Gradle wrapper
+        working-directory: android
+        run: gradle wrapper --gradle-version 8.7
 
       - name: Build Debug APK
         working-directory: android
-        run: ./gradlew assembleDebug --no-daemon
+        run: |
+          chmod +x ./gradlew
+          ./gradlew assembleDebug --no-daemon
 
       - name: Get version tag
         id: ver
