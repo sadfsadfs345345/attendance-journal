@@ -22,6 +22,19 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK components
+        run: |
+          sdkmanager --install \
+            "platforms;android-35" \
+            "build-tools;34.0.0" \
+            "platform-tools"
+
+      - name: Accept Android SDK licenses
+        run: yes | sdkmanager --licenses || true
+
       - name: Install Gradle 8.7
         uses: gradle/actions/setup-gradle@v3
         with:
@@ -34,7 +47,7 @@ jobs:
       - name: Create dummy google-services.json
         working-directory: android/app
         run: |
-          cat > google-services.json << 'EOF'
+          cat > google-services.json << 'GSJSON'
           {
             "project_info": {
               "project_number": "000000000000",
@@ -52,13 +65,15 @@ jobs:
             }],
             "configuration_version": "1"
           }
-          EOF
+          GSJSON
 
       - name: Build Debug APK
         working-directory: android
-        run: ./gradlew assembleDebug --no-daemon --stacktrace
+        env:
+          ANDROID_HOME: ${{ env.ANDROID_HOME }}
+        run: ./gradlew assembleDebug --no-daemon --stacktrace 2>&1 | tail -100
 
-      - name: Upload APK artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: app-debug-apk
@@ -81,6 +96,19 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK components
+        run: |
+          sdkmanager --install \
+            "platforms;android-35" \
+            "build-tools;34.0.0" \
+            "platform-tools"
+
+      - name: Accept Android SDK licenses
+        run: yes | sdkmanager --licenses || true
+
       - name: Install Gradle 8.7
         uses: gradle/actions/setup-gradle@v3
         with:
@@ -93,7 +121,7 @@ jobs:
       - name: Create dummy google-services.json
         working-directory: android/app
         run: |
-          cat > google-services.json << 'EOF'
+          cat > google-services.json << 'GSJSON'
           {
             "project_info": {
               "project_number": "000000000000",
@@ -111,7 +139,7 @@ jobs:
             }],
             "configuration_version": "1"
           }
-          EOF
+          GSJSON
 
       - name: Build Debug APK
         working-directory: android
@@ -130,7 +158,7 @@ jobs:
             ## 📋 Журнал посещаемости
 
             ### 📱 Установка на Android:
-            1. Скачайте `app-debug.apk`
+            1. Скачайте `app-debug.apk` ниже
             2. Откройте файл, разрешите установку
             3. Иконка появится на рабочем столе ✨
           files: android/app/build/outputs/apk/debug/app-debug.apk
