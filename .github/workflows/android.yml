@@ -5,7 +5,7 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-  workflow_dispatch:   # ручной запуск из вкладки Actions
+  workflow_dispatch:
 
 jobs:
   build:
@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Set up JDK 17
@@ -21,16 +21,20 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: gradle
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+      - name: Install Gradle 8.7
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.7'
+
+      - name: Generate Gradle Wrapper
         working-directory: android
+        run: gradle wrapper --gradle-version 8.7
 
       - name: Create dummy google-services.json
         working-directory: android/app
         run: |
-          cat > google-services.json << 'GSJSON'
+          cat > google-services.json << 'EOF'
           {
             "project_info": {
               "project_number": "000000000000",
@@ -48,16 +52,16 @@ jobs:
             }],
             "configuration_version": "1"
           }
-          GSJSON
+          EOF
 
       - name: Build Debug APK
-        run: ./gradlew assembleDebug --no-daemon --stacktrace
         working-directory: android
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug
+          name: app-debug-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
 
@@ -68,7 +72,7 @@ jobs:
     if: github.event_name != 'pull_request'
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Set up JDK 17
@@ -76,16 +80,20 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: gradle
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+      - name: Install Gradle 8.7
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.7'
+
+      - name: Generate Gradle Wrapper
         working-directory: android
+        run: gradle wrapper --gradle-version 8.7
 
       - name: Create dummy google-services.json
         working-directory: android/app
         run: |
-          cat > google-services.json << 'GSJSON'
+          cat > google-services.json << 'EOF'
           {
             "project_info": {
               "project_number": "000000000000",
@@ -103,33 +111,29 @@ jobs:
             }],
             "configuration_version": "1"
           }
-          GSJSON
+          EOF
 
       - name: Build Debug APK
-        run: ./gradlew assembleDebug --no-daemon
         working-directory: android
+        run: ./gradlew assembleDebug --no-daemon
 
       - name: Get version tag
-        id: version
+        id: ver
         run: echo "tag=v1.0.$(date +'%Y%m%d-%H%M')" >> $GITHUB_OUTPUT
 
-      - name: Create GitHub Release with APK
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.version.outputs.tag }}
-          name: "Release ${{ steps.version.outputs.tag }}"
+          tag_name: ${{ steps.ver.outputs.tag }}
+          name: "Release ${{ steps.ver.outputs.tag }}"
           body: |
             ## 📋 Журнал посещаемости
 
-            ### 📱 Установка на Android
-            1. Скачайте `app-debug.apk` ниже
+            ### 📱 Установка на Android:
+            1. Скачайте `app-debug.apk`
             2. Откройте файл, разрешите установку
             3. Иконка появится на рабочем столе ✨
-
-            > это debug-сборка.
           files: android/app/build/outputs/apk/debug/app-debug.apk
-          draft: false
-          prerelease: false
           make_latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
