@@ -22,7 +22,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Android SDK (API 35)
+      - name: Setup Android SDK
         run: |
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses 2>&1 | tail -3 || true
           $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-35" "build-tools;34.0.0" 2>&1 | tail -5
@@ -33,6 +33,7 @@ jobs:
           wget -q "https://services.gradle.org/distributions/gradle-8.7-bin.zip" -O /tmp/gradle.zip
           unzip -q /tmp/gradle.zip -d /opt/gradle
           echo "/opt/gradle/gradle-8.7/bin" >> $GITHUB_PATH
+          /opt/gradle/gradle-8.7/bin/gradle --version
 
       - name: Generate Gradle Wrapper
         working-directory: android
@@ -46,24 +47,22 @@ jobs:
           printf '{"project_info":{"project_number":"000000000000","project_id":"attendance-demo","storage_bucket":"attendance-demo.appspot.com"},"client":[{"client_info":{"mobilesdk_app_id":"1:000000000000:android:0000000000000000","android_client_info":{"package_name":"com.attendance.app"}},"oauth_client":[],"api_key":[{"current_key":"PLACEHOLDER"}],"services":{"appinvite_service":{"other_platform_oauth_client":[]}}}],"configuration_version":"1"}' > google-services.json
 
       - name: Build Debug APK
+        id: build
         working-directory: android
+        continue-on-error: true
+        run: ./gradlew assembleDebug --no-daemon 2>&1 | tee /tmp/build.log; echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
+
+      - name: Show build errors in Summary
+        if: steps.build.outcome == 'failure' || steps.build.outputs.exit_code != '0'
         run: |
-          ./gradlew assembleDebug --no-daemon 2>&1 | tee /tmp/build.log
-          BUILD_EXIT=${PIPESTATUS[0]}
-          if [ $BUILD_EXIT -ne 0 ]; then
-            echo "## ❌ Build Errors" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            grep -E "(error:|Error:|FAILED|Exception in thread|Unresolved reference|None of the following)" /tmp/build.log | head -40 >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            echo "### Last 20 lines" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            tail -20 /tmp/build.log >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            exit 1
-          fi
+          echo "## ❌ Build Failed — Error Log" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cat /tmp/build.log | tail -100 >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          exit 1
 
       - name: Upload APK
-        if: success()
+        if: steps.build.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: app-debug-apk
