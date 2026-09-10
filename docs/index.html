@@ -27,15 +27,6 @@
     .icon { font-size: 64px; margin-bottom: 12px; }
     h1 { font-size: 26px; font-weight: 700; color: #1a1a1a; margin-bottom: 8px; }
     .subtitle { color: #666; font-size: 15px; margin-bottom: 36px; line-height: 1.5; }
-    .platform-section { margin-bottom: 28px; }
-    .platform-title {
-      font-size: 13px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #999;
-      margin-bottom: 12px;
-    }
     .btn {
       display: flex;
       align-items: center;
@@ -53,113 +44,32 @@
       margin-bottom: 10px;
     }
     .btn:active { transform: scale(0.97); }
-    .btn-android {
-      background: linear-gradient(135deg, #34A853, #0F9D58);
-      color: #fff;
-      box-shadow: 0 6px 20px rgba(52,168,83,0.4);
-    }
+    .btn-android { background: linear-gradient(135deg, #34A853, #0F9D58); color: #fff; box-shadow: 0 6px 20px rgba(52,168,83,0.4); }
     .btn-android:hover { box-shadow: 0 10px 28px rgba(52,168,83,0.5); }
-    .btn-windows {
-      background: linear-gradient(135deg, #0078D4, #106EBE);
-      color: #fff;
-      box-shadow: 0 6px 20px rgba(0,120,212,0.4);
-    }
+    .btn-windows { background: linear-gradient(135deg, #0078D4, #106EBE); color: #fff; box-shadow: 0 6px 20px rgba(0,120,212,0.4); }
     .btn-windows:hover { box-shadow: 0 10px 28px rgba(0,120,212,0.5); }
-    .btn-linux {
-      background: linear-gradient(135deg, #E95420, #C43F15);
-      color: #fff;
-      box-shadow: 0 6px 20px rgba(233,84,32,0.4);
-    }
-    .btn-macos {
-      background: linear-gradient(135deg, #555, #333);
-      color: #fff;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-    }
-    .btn-outline {
-      background: transparent;
-      border: 2px solid #e0e0e0;
-      color: #444;
-    }
+    .btn-linux { background: linear-gradient(135deg, #E95420, #C43F15); color: #fff; box-shadow: 0 6px 20px rgba(233,84,32,0.4); }
+    .btn-outline { background: transparent; border: 2px solid #e0e0e0; color: #444; }
     .btn-outline:hover { background: #f5f5f5; }
-    .steps {
-      background: #f8f9fa;
-      border-radius: 14px;
-      padding: 20px;
-      text-align: left;
-      margin-top: 24px;
-    }
+    .steps { background: #f8f9fa; border-radius: 14px; padding: 20px; text-align: left; margin-top: 24px; }
     .steps-title { font-weight: 600; color: #333; margin-bottom: 12px; font-size: 14px; }
-    .step {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 8px;
-      font-size: 13px;
-      color: #555;
-      line-height: 1.5;
-    }
-    .step-num {
-      background: #1976D2;
-      color: #fff;
-      border-radius: 50%;
-      width: 20px;
-      height: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      font-weight: 700;
-      flex-shrink: 0;
-      margin-top: 1px;
-    }
-    .warning {
-      background: #FFF8E1;
-      border: 1px solid #FFE082;
-      border-radius: 10px;
-      padding: 12px 16px;
-      font-size: 13px;
-      color: #7c6000;
-      text-align: left;
-      margin-top: 16px;
-      line-height: 1.5;
-    }
+    .step { display: flex; gap: 10px; margin-bottom: 8px; font-size: 13px; color: #555; line-height: 1.5; }
+    .step-num { background: #1976D2; color: #fff; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+    .warning { background: #FFF8E1; border: 1px solid #FFE082; border-radius: 10px; padding: 12px 16px; font-size: 13px; color: #7c6000; text-align: left; margin-top: 16px; line-height: 1.5; }
     .divider { border: none; border-top: 1px solid #eee; margin: 24px 0; }
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: #e8f5e9;
-      color: #2e7d32;
-      border-radius: 20px;
-      padding: 4px 12px;
-      font-size: 12px;
-      font-weight: 600;
-      margin-bottom: 20px;
-    }
-    #android-section, #desktop-section { display: none; }
-    #auto-section { display: block; }
     .tab-row { display: flex; gap: 8px; margin-bottom: 20px; }
-    .tab {
-      flex: 1;
-      padding: 10px;
-      border-radius: 10px;
-      border: 2px solid #e0e0e0;
-      background: #fff;
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 600;
-      color: #666;
-      transition: all 0.15s;
-    }
+    .tab { flex: 1; padding: 10px; border-radius: 10px; border: 2px solid #e0e0e0; background: #fff; cursor: pointer; font-size: 13px; font-weight: 600; color: #666; transition: all 0.15s; }
     .tab.active { border-color: #1976D2; background: #e3f2fd; color: #1976D2; }
     .version-info { font-size: 12px; color: #aaa; margin-top: 20px; }
     #latest-version { font-weight: 600; color: #555; }
+    .loading { color: #aaa; font-size: 13px; padding: 12px; }
   </style>
 </head>
 <body>
 <div class="card">
   <div class="icon">📋</div>
   <h1>Журнал посещаемости</h1>
-  <p class="subtitle">Отметка присутствия, цепочка подтверждений, статистика — для старост учебных групп</p>
+  <p class="subtitle">Отметка присутствия, цепочка подтверждений, статистика</p>
 
   <div class="tab-row">
     <button class="tab" onclick="showPlatform('android')">📱 Android</button>
@@ -168,74 +78,65 @@
   </div>
 
   <!-- ANDROID -->
-  <div id="android-section">
-    <a id="apk-btn" class="btn btn-android" href="https://github.com/sadfsadfs345345/attendance-journal/releases/latest/download/app-debug.apk">
+  <div id="android-section" style="display:none">
+    <a id="apk-btn" class="btn btn-android" href="#">
       <span>📲</span> Скачать APK для Android
     </a>
     <div class="steps">
       <div class="steps-title">📖 Как установить:</div>
-      <div class="step"><div class="step-num">1</div><span>Нажмите кнопку выше — APK скачается автоматически</span></div>
+      <div class="step"><div class="step-num">1</div><span>Нажмите кнопку — APK скачается автоматически</span></div>
       <div class="step"><div class="step-num">2</div><span>Откройте файл из уведомления или папки «Загрузки»</span></div>
       <div class="step"><div class="step-num">3</div><span>Если появится предупреждение — нажмите «Разрешить» → «Установить»</span></div>
       <div class="step"><div class="step-num">4</div><span>Иконка «Журнал» появится на рабочем столе ✨</span></div>
     </div>
-    <div class="warning">
-      ⚠️ Андроид может спросить разрешение для установки из неизвестных источников. Нажмите «Разрешить» — это безопасно, приложение разработано вами.
-    </div>
+    <div class="warning">⚠️ Андроид может спросить разрешение для установки из неизвестных источников. Нажмите «Разрешить» — это безопасно.</div>
   </div>
 
   <!-- WINDOWS -->
   <div id="windows-section" style="display:none">
-    <a class="btn btn-windows"
-       href="https://github.com/sadfsadfs345345/attendance-journal/releases/latest/download/install-windows.ps1"
-       download="install-windows.ps1">
+    <a id="ps1-btn" class="btn btn-windows" href="#" download="install-windows.ps1">
       <span>⚡</span> Скачать авто-установщик (Windows)
     </a>
+    <div id="ps1-loading" class="loading">⏳ Загрузка ссылки...</div>
     <div class="steps">
       <div class="steps-title">📖 Как запустить:</div>
       <div class="step"><div class="step-num">1</div><span>Скачайте файл <b>install-windows.ps1</b></span></div>
       <div class="step"><div class="step-num">2</div><span>Правая кнопка мыши → «Запустить с помощью PowerShell»</span></div>
-      <div class="step"><div class="step-num">3</div><span>Скрипт сам скачает последнюю версию и создаёт ярлык на рабочем столе ✨</span></div>
+      <div class="step"><div class="step-num">3</div><span>Скрипт скачает Java (если нужно) и создаёт ярлык на рабочем столе ✨</span></div>
     </div>
     <hr class="divider">
-    <p style="font-size:13px;color:#666;margin-bottom:10px">Или скачайте JAR и запустите вручную:</p>
-    <a class="btn btn-outline" href="https://github.com/sadfsadfs345345/attendance-journal/releases/latest" target="_blank">
+    <a id="jar-btn" class="btn btn-outline" href="https://github.com/sadfsadfs345345/attendance-journal/releases" target="_blank">
       📦 Все файлы выпуска (GitHub Releases)
     </a>
   </div>
 
   <!-- LINUX/MACOS -->
   <div id="linux-section" style="display:none">
-    <a class="btn btn-linux"
-       href="https://github.com/sadfsadfs345345/attendance-journal/releases/latest"
-       target="_blank">
+    <a id="jar-linux-btn" class="btn btn-linux" href="https://github.com/sadfsadfs345345/attendance-journal/releases" target="_blank">
       📦 Скачать JAR (последняя версия)
     </a>
     <div class="steps">
       <div class="steps-title">📖 Запуск через терминал:</div>
       <div class="step"><div class="step-num">1</div><span>Java 17+: <code>sudo apt install openjdk-17-jdk</code></span></div>
-      <div class="step"><div class="step-num">2</div><span>Bash: <code>bash &lt;(curl -fsSL https://sadfsadfs345345.github.io/attendance-journal/install.sh)</code></span></div>
-      <div class="step"><div class="step-num">3</div><span>Или скачайте JAR из Releases и запустите: <code>java -jar attendance.jar</code></span></div>
+      <div class="step"><div class="step-num">2</div><span>Скачайте JAR из Releases и запустите: <code>java -jar attendance-journal.jar</code></span></div>
     </div>
   </div>
 
   <div class="version-info">
-    Версия: <span id="latest-version">загрузка...</span> &bull;
+    <span id="latest-version">загрузка...</span> &bull;
     <a href="https://github.com/sadfsadfs345345/attendance-journal" target="_blank" style="color:#1976D2">Исходный код</a>
   </div>
 </div>
 
 <script>
   const REPO = 'sadfsadfs345345/attendance-journal';
+  const API  = 'https://api.github.com/repos/' + REPO + '/releases';
 
-  // Auto-detect platform and show the right tab
   function detectPlatform() {
     const ua = navigator.userAgent.toLowerCase();
     if (/android/.test(ua)) return 'android';
-    if (/win/.test(ua)) return 'windows';
-    if (/linux/.test(ua)) return 'linux';
-    if (/mac/.test(ua)) return 'linux'; // macOS uses same JAR
-    return 'android';
+    if (/win/.test(ua))     return 'windows';
+    return 'linux';
   }
 
   function showPlatform(name) {
@@ -244,28 +145,64 @@
       if (el) el.style.display = (p === name) ? 'block' : 'none';
     });
     document.querySelectorAll('.tab').forEach((t, i) => {
-      const names = ['android', 'windows', 'linux'];
-      t.classList.toggle('active', names[i] === name);
+      t.classList.toggle('active', ['android','windows','linux'][i] === name);
     });
   }
 
-  // Load latest version from GitHub API
-  fetch('https://api.github.com/repos/' + REPO + '/releases/latest')
+  // Fetch ALL releases and find the right asset in each
+  fetch(API + '?per_page=20')
     .then(r => r.json())
-    .then(data => {
-      const ver = data.tag_name || 'нет выпусков';
-      document.getElementById('latest-version').textContent = ver;
-      // Update APK download link to actual release asset
-      const apkAsset = (data.assets || []).find(a => a.name.endsWith('.apk'));
-      if (apkAsset) {
-        document.getElementById('apk-btn').href = apkAsset.browser_download_url;
+    .then(releases => {
+      let apkUrl = null, ps1Url = null, jarUrl = null;
+      let androidVer = '', desktopVer = '';
+
+      for (const rel of releases) {
+        for (const asset of (rel.assets || [])) {
+          if (!apkUrl && asset.name.endsWith('.apk')) {
+            apkUrl = asset.browser_download_url;
+            androidVer = rel.tag_name;
+          }
+          if (!ps1Url && asset.name === 'install-windows.ps1') {
+            ps1Url = asset.browser_download_url;
+            desktopVer = rel.tag_name;
+          }
+          if (!jarUrl && asset.name.endsWith('.jar')) {
+            jarUrl = asset.browser_download_url;
+          }
+        }
+        if (apkUrl && ps1Url && jarUrl) break;
       }
+
+      // APK button
+      if (apkUrl) {
+        document.getElementById('apk-btn').href = apkUrl;
+      }
+
+      // Windows PS1 button
+      const ps1Loading = document.getElementById('ps1-loading');
+      if (ps1Url) {
+        document.getElementById('ps1-btn').href = ps1Url;
+        ps1Loading.style.display = 'none';
+      } else {
+        ps1Loading.textContent = '⚠️ Файл пока собирается — загляните через немного';
+      }
+
+      // JAR buttons
+      if (jarUrl) {
+        document.getElementById('jar-btn').href = jarUrl;
+        document.getElementById('jar-linux-btn').href = jarUrl;
+      }
+
+      // Version display
+      document.getElementById('latest-version').textContent =
+        [аndroidVer && ('Android ' + androidVer), desktopVer && ('Desktop ' + desktopVer)]
+        .filter(Boolean).join(' • ') || 'см. Releases';
     })
     .catch(() => {
       document.getElementById('latest-version').textContent = 'см. Releases';
+      document.getElementById('ps1-loading').style.display = 'none';
     });
 
-  // Auto-show detected platform on load
   showPlatform(detectPlatform());
 </script>
 </body>
