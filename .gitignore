@@ -1,0 +1,41 @@
+# Android
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# Google Services (Firebase) — не коммитить в публичный репо!
+android/app/google-services.json
+
+# Keystore files
+*.jks
+*.keystore
+
+# Desktop
+desktop/.gradle
+desktop/build
+
+# Kotlin
+*.class
+
+# Gradle
+.gradle/
+build/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+out/
+
+# macOS
+.DS_Store
+
+# APK output (собирается через CI)
+*.apk
+*.aab
