@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
-    // alias(libs.plugins.google.services) // uncomment after adding google-services.json
+    // alias(libs.plugins.google.services) // uncomment after adding real google-services.json
 }
 
 android {
@@ -16,8 +16,7 @@ android {
         minSdk = 26
         targetSdk = 35
         versionCode = 1
-        versionName = "1.0.0"
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        versionName = "1.0"
     }
 
     buildTypes {
@@ -27,10 +26,6 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-        }
-        debug {
-            applicationIdSuffix = ".debug"
-            isDebuggable = true
         }
     }
 
@@ -45,66 +40,53 @@ android {
 
     buildFeatures {
         compose = true
-        buildConfig = true
-    }
-
-    packaging {
-        resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
     }
 }
 
 dependencies {
-    implementation(libs.core.ktx)
-    implementation(libs.lifecycle.runtime.ktx)
-    implementation(libs.lifecycle.viewmodel.compose)
-    implementation(libs.activity.compose)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.icons.extended)
+    implementation(libs.androidx.navigation.compose)
 
-    // Compose BOM
-    implementation(platform(libs.compose.bom))
-    implementation(libs.compose.ui)
-    implementation(libs.compose.ui.graphics)
-    implementation(libs.compose.ui.tooling.preview)
-    implementation(libs.compose.material3)
-    implementation(libs.compose.material.icons)
-    debugImplementation(libs.compose.ui.tooling)
-
-    // Navigation
-    implementation(libs.navigation.compose)
+    // Hilt DI
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    implementation(libs.hilt.navigation.compose)
+    implementation(libs.hilt.work)
+    ksp(libs.androidx.hilt.compiler)
 
     // Room
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
 
-    // Hilt
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
-    implementation(libs.hilt.navigation.compose)
-
-    // Retrofit + OkHttp + Moshi
-    implementation(libs.retrofit.core)
+    // Retrofit + Moshi
+    implementation(libs.retrofit)
     implementation(libs.retrofit.moshi)
-    implementation(libs.okhttp.core)
-    implementation(libs.okhttp.logging)
-    implementation(libs.moshi.core)
     implementation(libs.moshi.kotlin)
-    ksp(libs.moshi.codegen)
+    implementation(libs.moshi.adapters)
+    implementation(libs.okhttp.logging)
 
-    // WorkManager
-    implementation(libs.workmanager.ktx)
-    implementation(libs.hilt.workmanager)
-    ksp(libs.hilt.workmanager.compiler)
+    // Coroutines
+    implementation(libs.coroutines.android)
 
     // DataStore
     implementation(libs.datastore.preferences)
 
-    // Firebase
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.messaging)
+    // WorkManager
+    implementation(libs.workmanager.ktx)
 
-    // Coil
-    implementation(libs.coil.compose)
+    // Firebase (commented out until google-services.json is added)
+    // implementation(platform(libs.firebase.bom))
+    // implementation(libs.firebase.messaging)
 
-    // CSV Export
-    implementation(libs.apache.csv)
+    debugImplementation(libs.androidx.ui.tooling)
 }
