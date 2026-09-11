@@ -37,83 +37,88 @@ jobs:
         working-directory: desktop
         run: ./gradlew :app:packageUberJarForCurrentOS --no-daemon
 
-      - name: Prepare JAR for packaging
+      - name: Prepare JAR
         shell: pwsh
         run: |
           $jar = Get-ChildItem -Path "desktop/app/build/compose/jars/" -Filter "*.jar" | Select-Object -First 1
           if (-not $jar) { Write-Error "JAR not found"; exit 1 }
           New-Item -ItemType Directory -Force -Path "pkg_input" | Out-Null
           Copy-Item $jar.FullName "pkg_input/attendance-journal.jar"
-          Write-Host "JAR: $($jar.Name) ($([math]::Round($jar.Length/1MB,1)) MB)"
+          Write-Host "Prepared JAR: $($jar.Name) ($([math]::Round($jar.Length/1MB,1)) MB)"
+          # Verify Main-Class in manifest
+          $manifest = & "$env:JAVA_HOME\bin\jar.exe" tf $jar.FullName | Select-String "MANIFEST"
+          Write-Host "Manifest check: $manifest"
 
       - name: Create app image with jpackage
         shell: pwsh
         run: |
           $jpackage = "$env:JAVA_HOME\bin\jpackage.exe"
+          Write-Host "jpackage: $jpackage"
           & $jpackage `
             --type app-image `
             --input pkg_input `
-            --name "AttendanceJournal" `
+            --name AttendanceJournal `
             --main-jar attendance-journal.jar `
+            --main-class com.attendance.desktop.MainKt `
             --dest app_image `
-            --app-version "1.0.0" `
+            --app-version 1.0.0 `
             --description "Журнал посещаемости" `
-            --vendor "AttendanceJournal"
-          if ($LASTEXITCODE -ne 0) { Write-Error "jpackage failed"; exit 1 }
-          Write-Host "App image created:"
-          Get-ChildItem app_image -Recurse | Select-Object FullName | Format-Table
+            --vendor AttendanceJournal `
+            --win-console
+          if ($LASTEXITCODE -ne 0) { Write-Error "jpackage failed with exit $LASTEXITCODE"; exit 1 }
+          Write-Host "App image contents:"
+          Get-ChildItem app_image -Recurse | Select-Object FullName
 
       - name: Create Inno Setup script
         shell: pwsh
         run: |
-          $iss = @'
-          [Setup]
-          AppName=Журнал посещаемости
-          AppVersion=1.0.0
-          AppPublisher=AttendanceJournal
-          DefaultDirName={localappdata}\AttendanceJournal
-          DefaultGroupName=Журнал посещаемости
-          DisableProgramGroupPage=yes
-          OutputDir=.
-          OutputBaseFilename=AttendanceJournal-Setup
-          Compression=lzma2
-          SolidCompression=yes
-          PrivilegesRequired=lowest
-          ArchitecturesAllowed=x64
-          ArchitecturesInstallIn64BitMode=x64
-          WizardStyle=modern
-          SetupIconFile=
+          $appDir = (Resolve-Path "app_image\AttendanceJournal").Path
+          $iss = "[Setup]`n" +
+            "AppName=Zhurnal Poseshchaemosti`n" +
+            "AppVersion=1.0.0`n" +
+            "AppPublisher=AttendanceJournal`n" +
+            "DefaultDirName={localappdata}\\AttendanceJournal`n" +
+            "DefaultGroupName=AttendanceJournal`n" +
+            "DisableProgramGroupPage=yes`n" +
+            "OutputDir=.`n" +
+            "OutputBaseFilename=AttendanceJournal-Setup`n" +
+            "Compression=lzma2`n" +
+            "SolidCompression=yes`n" +
+            "PrivilegesRequired=lowest`n" +
+            "WizardStyle=modern`n" +
+            "`n" +
+            "[Languages]`n" +
+            "Name: russian; MessagesFile: compiler:Languages\\Russian.isl`n" +
+            "`n" +
+            "[Files]`n" +
+            "Source: `"$appDir\\*`"; DestDir: `"{app}`"; Flags: ignoreversion recursesubdirs createallsubdirs`n" +
+            "`n" +
+            "[Icons]`n" +
+            "Name: `"{autodesktop}\\Zhurnal Poseshchaemosti`"; Filename: `"{app}\\AttendanceJournal.exe`"`n" +
+            "`n" +
+            "[Run]`n" +
+            "Filename: `"{app}\\AttendanceJournal.exe`"; Description: Launch app; Flags: nowait postinstall skipifsilent`n"
+          $iss | Out-File -FilePath setup.iss -Encoding ascii
+          Write-Host "=== setup.iss ==="
+          Get-Content setup.iss
 
-          [Languages]
-          Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
-
-          [Files]
-          Source: "app_image\AttendanceJournal\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-
-          [Icons]
-          Name: "{autodesktop}\Журнал посещаемости"; Filename: "{app}\AttendanceJournal.exe"
-          Name: "{group}\Журнал посещаемости"; Filename: "{app}\AttendanceJournal.exe"
-          Name: "{group}\Удалить"; Filename: "{uninstallexe}"
-
-          [Run]
-          Filename: "{app}\AttendanceJournal.exe"; Description: "Запустить приложение"; Flags: nowait postinstall skipifsilent
-          '@
-          $iss | Out-File -FilePath "setup.iss" -Encoding utf8
-          Write-Host "Inno Setup script created"
-
-      - name: Compile installer with Inno Setup
+      - name: Compile with Inno Setup
         shell: pwsh
         run: |
-          $iscc = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
-          if (-not (Test-Path $iscc)) {
-            $iscc = Get-ChildItem "C:\Program Files (x86)" -Filter "ISCC.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName
+          # Find ISCC
+          $iscc = @(
+            "C:\Program Files (x86)\Inno Setup 6\ISCC.exe",
+            "C:\Program Files\Inno Setup 6\ISCC.exe"
+          ) | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if (-not $iscc) {
+            $iscc = Get-ChildItem "C:\Program Files*" -Filter "ISCC.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName
           }
-          if (-not $iscc) { Write-Error "Inno Setup not found"; exit 1 }
-          Write-Host "Using Inno Setup: $iscc"
-          & $iscc setup.iss
+          if (-not $iscc) { Write-Error "Inno Setup not found!"; exit 1 }
+          Write-Host "Using: $iscc"
+          & $iscc /Qp setup.iss
           if ($LASTEXITCODE -ne 0) { Write-Error "ISCC failed"; exit 1 }
           $exe = Get-Item "AttendanceJournal-Setup.exe"
-          Write-Host "Installer created: $($exe.Name) ($([math]::Round($exe.Length/1MB,1)) MB)"
+          Write-Host "SUCCESS: $($exe.Name) ($([math]::Round($exe.Length/1MB,1)) MB)"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -139,7 +144,7 @@ jobs:
 
             1. Скачайте `AttendanceJournal-Setup.exe`
             2. Запустите — установщик создаст ярлык на рабочем столе ✨
-            3. Java уже встроена — ничего дополнительно устанавливать не нужно
+            3. Java встроена — ничего дополнительно устанавливать не нужно
           files: AttendanceJournal-Setup.exe
           make_latest: false
         env:
