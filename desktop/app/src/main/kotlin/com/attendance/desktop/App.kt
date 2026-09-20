@@ -9,10 +9,17 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.attendance.desktop.model.Role
 
 @Composable
 fun App() {
-    var selectedTab by remember { mutableStateOf(0) }
+    var activeRole by remember { mutableStateOf<Role?>(null) }
+    if (activeRole == null) {
+        DesktopLoginScreen(onLogin = { activeRole = it })
+        return
+    }
+    val role = activeRole!!
+    var selectedTab by remember(role) { mutableStateOf(0) }
     var darkTheme   by remember { mutableStateOf(AppSettings.darkTheme) }
     var archive     by remember { mutableStateOf(AppSettings.getArchivedLessons()) }
 
@@ -42,6 +49,11 @@ fun App() {
         outlineVariant     = Color(0xFF353560)
     )
 
+    val tabLabels = when (role) {
+        Role.STUDENT -> listOf("Журнал", "Статистика", "Настройки")
+        else -> listOf("Журнал", "Статистика", "Студенты", "Архив", "Настройки")
+    }
+
     MaterialTheme(colorScheme = if (darkTheme) darkColors else lightColors) {
         Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
             Row(Modifier.fillMaxSize()) {
@@ -61,31 +73,38 @@ fun App() {
                     HorizontalDivider(Modifier.padding(horizontal = 12.dp))
                     Spacer(Modifier.height(8.dp))
 
-                    NavigationRailItem(selected = selectedTab==0, onClick = { selectedTab=0 },
-                        icon = { Icon(Icons.Default.List, null) }, label = { Text("Журнал") })
-                    NavigationRailItem(selected = selectedTab==1, onClick = { selectedTab=1 },
-                        icon = { Icon(Icons.Default.BarChart, null) }, label = { Text("Статистика") })
-                    NavigationRailItem(selected = selectedTab==2, onClick = { selectedTab=2 },
-                        icon = { Icon(Icons.Default.Group, null) }, label = { Text("Студенты") })
-                    NavigationRailItem(selected = selectedTab==3, onClick = { selectedTab=3 },
-                        icon = { Icon(Icons.Default.Archive, null) }, label = { Text("Архив") })
-                    NavigationRailItem(selected = selectedTab==4, onClick = { selectedTab=4 },
-                        icon = { Icon(Icons.Default.Settings, null) }, label = { Text("Настройки") })
+                    tabLabels.forEachIndexed { index, label ->
+                        val icon = when (label) {
+                            "Журнал" -> Icons.Default.List
+                            "Статистика" -> Icons.Default.BarChart
+                            "Студенты" -> Icons.Default.Group
+                            "Архив" -> Icons.Default.Archive
+                            else -> Icons.Default.Settings
+                        }
+                        NavigationRailItem(selected = selectedTab == index, onClick = { selectedTab = index },
+                            icon = { Icon(icon, label) }, label = { Text(label) })
+                    }
                 }
 
                 Box(Modifier.fillMaxHeight().width(1.dp)
                     .background(MaterialTheme.colorScheme.outlineVariant))
 
-                Box(Modifier.fillMaxSize().padding(28.dp)) {
-                    when (selectedTab) {
-                        0 -> AttendanceTab(onLessonClosed = { lesson ->
-                            AppSettings.saveArchivedLesson(lesson)
-                            archive = AppSettings.getArchivedLessons()
-                        })
-                        1 -> StatisticsTab()
-                        2 -> StudentsTab()
-                        3 -> ArchiveTab(archive)
-                        4 -> SettingsTab(onThemeChange = { darkTheme = it })
+                Column(Modifier.fillMaxSize().padding(28.dp)) {
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                        Text("Демо-вход · ${role.displayName}", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        TextButton(onClick = { activeRole = null }) { Text("Сменить роль") }
+                    }
+                    Box(Modifier.fillMaxSize().padding(top = 12.dp)) {
+                        when (tabLabels.getOrNull(selectedTab)) {
+                            "Журнал" -> AttendanceTab(role, onLessonClosed = { lesson ->
+                                AppSettings.saveArchivedLesson(lesson)
+                                archive = AppSettings.getArchivedLessons()
+                            })
+                            "Статистика" -> StatisticsTab()
+                            "Студенты" -> StudentsTab()
+                            "Архив" -> ArchiveTab(archive)
+                            "Настройки" -> SettingsTab(onThemeChange = { darkTheme = it })
+                        }
                     }
                 }
             }
