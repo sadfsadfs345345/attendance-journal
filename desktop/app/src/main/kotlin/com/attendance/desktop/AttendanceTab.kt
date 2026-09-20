@@ -32,6 +32,11 @@ fun AttendanceTab() {
     var saveMsg by remember { mutableStateOf("") }
     val students = remember { AppSettings.getStudents().mapIndexed { i, n -> DemoStudent(i + 1, n) } }
     val records  = remember { mutableStateMapOf<Int, Int>() }
+    val attendanceKey = remember(selDate, subject) { AppSettings.attendanceKey(selDate, subject) }
+    LaunchedEffect(attendanceKey, students) {
+        records.clear()
+        students.forEach { student -> AppSettings.getAttendance(attendanceKey, student.id)?.let { records[student.id] = it } }
+    }
 
     Column(Modifier.fillMaxSize()) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
@@ -79,7 +84,11 @@ fun AttendanceTab() {
                             val sel = records[student.id] == si
                             FilterChip(
                                 selected = sel,
-                                onClick = { if (sel) records.remove(student.id) else records[student.id] = si; saveMsg = "" },
+                                onClick = {
+                                    if (sel) { records.remove(student.id); AppSettings.saveAttendance(attendanceKey, student.id, null) }
+                                    else { records[student.id] = si; AppSettings.saveAttendance(attendanceKey, student.id, si) }
+                                    saveMsg = ""
+                                },
                                 label = { Text(STATUSES[si], fontSize = 11.sp) },
                                 modifier = Modifier.width(80.dp).padding(horizontal = 2.dp),
                                 colors = FilterChipDefaults.filterChipColors(
