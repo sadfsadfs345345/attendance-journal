@@ -9,12 +9,11 @@
 body[data-dark]{--pr:#818CF8;--pr-l:#1C1F3D;--pr-d:#A5B4FC;--bg:#0D0F1C;--sf:#141729;--s2:#1A1E35;--br:#252A48;--tx:#E2E5F4;--tx2:#8B91BE;--tx3:#515778;--sh:0 1px 3px rgba(0,0,0,.3),0 4px 12px rgba(0,0,0,.2);--grad:linear-gradient(135deg,#6366F1 0%,#8B5CF6 100%);--canvas-grad:linear-gradient(145deg,#0D0F1C 0%,#11142A 100%);--glow:rgba(129,140,248,.3);}
 /* Five premium palettes, each with a tuned light and dark surface system. */
 body[data-palette="ocean"]{--pr:#0E7490;--pr-l:#ECFEFF;--pr-d:#155E75;--bg:#F2F8FA;--s2:#E7F3F6;--br:#D9E9EE;--grad:linear-gradient(135deg,#0891B2 0%,#2563EB 100%);--canvas-grad:linear-gradient(145deg,#F5FCFE 0%,#F1F6FF 100%);--glow:rgba(14,116,144,.24);}
-body[data-palette="emerald"]{--pr:#059669;--pr-l:#ECFDF5;--pr-d:#047857;--bg:#F3FAF7;--s2:#E7F5EF;--br:#D8EDE3;--grad:linear-gradient(135deg,#059669 0%,#14B8A6 100%);--canvas-grad:linear-gradient(145deg,#F4FCF8 0%,#EFFAF7 100%);--glow:rgba(5,150,105,.22);}
 body[data-palette="rose"]{--pr:#E11D48;--pr-l:#FFF1F2;--pr-d:#BE123C;--bg:#FFF7F8;--s2:#FCECEF;--br:#F3DCE2;--grad:linear-gradient(135deg,#E11D48 0%,#F97316 100%);--canvas-grad:linear-gradient(145deg,#FFF9FA 0%,#FFF3F5 100%);--glow:rgba(225,29,72,.2);}
 body[data-palette="amber"]{--pr:#D97706;--pr-l:#FFF7ED;--pr-d:#B45309;--bg:#FFFBF5;--s2:#FFF3E2;--br:#F2E2C7;--grad:linear-gradient(135deg,#D97706 0%,#F59E0B 100%);--canvas-grad:linear-gradient(145deg,#FFFCF7 0%,#FFF7EC 100%);--glow:rgba(217,119,6,.2);}
-body[data-dark][data-palette="indigo"]{--pr:#818CF8;--pr-l:#1C1F3D;--pr-d:#A5B4FC;--bg:#0D0F1C;--sf:#141729;--s2:#1A1E35;--br:#252A48;--tx:#E2E5F4;--tx2:#8B91BE;--tx3:#515778;}
+body[data-palette="indigo"]{--pr:#A88768;--pr-l:#F7EEE6;--pr-d:#876A4E;--bg:#F7F3EF;--sf:#FFFDFC;--s2:#F3EBE4;--br:#E5D8CC;--tx:#342B27;--tx2:#887970;--tx3:#B2A39A;--grad:linear-gradient(135deg,#C6A98B 0%,#F0D6C6 100%);--canvas-grad:linear-gradient(145deg,#FBF8F5 0%,#F3ECE6 100%);--glow:rgba(190,151,117,.25);}
+body[data-dark][data-palette="indigo"]{--pr:#A9C0D3;--pr-l:#102B43;--pr-d:#D4E3EE;--bg:#071421;--sf:#0A1A2F;--s2:#10263A;--br:#243B50;--tx:#F1F4F5;--tx2:#98A9B8;--tx3:#5C7588;--grad:linear-gradient(135deg,#0A1A2F 0%,#1F1F1F 100%);--canvas-grad:linear-gradient(145deg,#040B12 0%,#0A1A2F 58%,#1F1F1F 100%);--glow:rgba(37,75,108,.38);}
 body[data-dark][data-palette="ocean"]{--pr:#22D3EE;--pr-l:#12323B;--pr-d:#67E8F9;--bg:#08161B;--sf:#102229;--s2:#15323B;--br:#21434D;--tx:#D9F7FB;--tx2:#86B7C1;--tx3:#52747D;--grad:linear-gradient(135deg,#06B6D4 0%,#2563EB 100%);--canvas-grad:linear-gradient(145deg,#08161B 0%,#0B1828 100%);--glow:rgba(34,211,238,.28);}
-body[data-dark][data-palette="emerald"]{--pr:#34D399;--pr-l:#10372B;--pr-d:#6EE7B7;--bg:#081812;--sf:#10251C;--s2:#153329;--br:#24503E;--tx:#DDF7EA;--tx2:#8FC8AA;--tx3:#56816C;--grad:linear-gradient(135deg,#10B981 0%,#22C55E 100%);--canvas-grad:linear-gradient(145deg,#081812 0%,#0A2119 100%);--glow:rgba(52,211,153,.25);}
 body[data-dark][data-palette="rose"]{--pr:#FB7185;--pr-l:#3A1822;--pr-d:#FDA4AF;--bg:#1B0D12;--sf:#28131A;--s2:#381923;--br:#552635;--tx:#FFE4E8;--tx2:#D79AA5;--tx3:#8E5A66;--grad:linear-gradient(135deg,#F43F5E 0%,#C026D3 100%);--canvas-grad:linear-gradient(145deg,#1B0D12 0%,#211020 100%);--glow:rgba(251,113,133,.26);}
 body[data-dark][data-palette="amber"]{--pr:#FBBF24;--pr-l:#392A0C;--pr-d:#FCD34D;--bg:#181208;--sf:#251B0C;--s2:#35260E;--br:#554016;--tx:#FFF1C7;--tx2:#D8B979;--tx3:#907642;--grad:linear-gradient(135deg,#F59E0B 0%,#EF4444 100%);--canvas-grad:linear-gradient(145deg,#181208 0%,#21160A 100%);--glow:rgba(251,191,36,.24);}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -238,15 +237,15 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .theme-panel.open{opacity:1;pointer-events:auto;transform:none}
 .theme-panel-title{font-size:11px;font-weight:900;color:var(--tx);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
 .theme-panel-subtitle{font-size:11px;color:var(--tx2);margin:-5px 0 12px}
-.theme-swatches{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.theme-swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 .theme-swatch{border:1px solid var(--br);background:var(--s2);border-radius:10px;padding:7px 3px 6px;cursor:pointer;color:var(--tx2);font-size:9px;font-weight:800;display:flex;flex-direction:column;align-items:center;gap:5px;transition:all .16s}
 .theme-swatch:hover{border-color:var(--pr);transform:translateY(-1px)}
 .theme-swatch.on{border-color:var(--pr);color:var(--pr);box-shadow:0 0 0 2px var(--pr-l)}
 .theme-dot{width:22px;height:22px;border-radius:50%;display:block;box-shadow:inset 0 0 0 3px rgba(255,255,255,.55)}
-.theme-swatch[data-v="indigo"] .theme-dot{background:linear-gradient(135deg,#4F46E5,#7C6CF7)}.theme-swatch[data-v="ocean"] .theme-dot{background:linear-gradient(135deg,#0891B2,#2563EB)}.theme-swatch[data-v="emerald"] .theme-dot{background:linear-gradient(135deg,#059669,#14B8A6)}.theme-swatch[data-v="rose"] .theme-dot{background:linear-gradient(135deg,#E11D48,#F97316)}.theme-swatch[data-v="amber"] .theme-dot{background:linear-gradient(135deg,#D97706,#F59E0B)}
-body[data-dark] .theme-swatch[data-v="indigo"] .theme-dot{background:linear-gradient(135deg,#6366F1,#8B5CF6)}body[data-dark] .theme-swatch[data-v="ocean"] .theme-dot{background:linear-gradient(135deg,#06B6D4,#2563EB)}body[data-dark] .theme-swatch[data-v="emerald"] .theme-dot{background:linear-gradient(135deg,#10B981,#22C55E)}body[data-dark] .theme-swatch[data-v="rose"] .theme-dot{background:linear-gradient(135deg,#F43F5E,#C026D3)}body[data-dark] .theme-swatch[data-v="amber"] .theme-dot{background:linear-gradient(135deg,#F59E0B,#EF4444)}
+.theme-swatch[data-v="indigo"] .theme-dot{background:linear-gradient(135deg,#4F46E5,#7C6CF7)}.theme-swatch[data-v="ocean"] .theme-dot{background:linear-gradient(135deg,#0891B2,#2563EB)}.theme-swatch[data-v="rose"] .theme-dot{background:linear-gradient(135deg,#E11D48,#F97316)}.theme-swatch[data-v="amber"] .theme-dot{background:linear-gradient(135deg,#D97706,#F59E0B)}
+body[data-dark] .theme-swatch[data-v="indigo"] .theme-dot{background:linear-gradient(135deg,#6366F1,#8B5CF6)}body[data-dark] .theme-swatch[data-v="ocean"] .theme-dot{background:linear-gradient(135deg,#06B6D4,#2563EB)}body[data-dark] body[data-dark] .theme-swatch[data-v="rose"] .theme-dot{background:linear-gradient(135deg,#F43F5E,#C026D3)}body[data-dark] .theme-swatch[data-v="amber"] .theme-dot{background:linear-gradient(135deg,#F59E0B,#EF4444)}
 .theme-setting-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}.theme-setting-row .theme-toggle{flex-shrink:0}
-.theme-setting-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.theme-setting-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 @media(max-width:520px){.theme-panel{top:58px;right:10px;left:10px;width:auto}.theme-toggle-label{display:none}.theme-toggle{padding-right:5px}.theme-palette-btn{width:32px}.tbar-title{display:none}}
 
 /* Premium interaction layer */
@@ -279,11 +278,10 @@ function paletteIcon(){return '<svg viewBox="0 0 24 24" fill="none" stroke="curr
     + '<button class="theme-palette-btn" id="sw-palette" data-a="paletteToggle" aria-label="Выбрать цветовую тему" aria-expanded="false">'+paletteIcon()+'</button>'
     + '</div></div>'
     + '<div class="theme-panel" id="theme-panel" aria-label="Цветовые темы">'
-    + '<div class="theme-panel-title">Цвет оформления</div><div class="theme-panel-subtitle">Пять акцентных тем для любого режима</div>'
+    + '<div class="theme-panel-title">Цвет оформления</div><div class="theme-panel-subtitle">Лориен для светлой темы · Dark Elegant для тёмной</div>'
     + '<div class="theme-swatches">'
-    + '<button class="theme-swatch" data-a="palette" data-v="indigo"><span class="theme-dot"></span>Индиго</button>'
+    + '<button class="theme-swatch" data-a="palette" data-v="indigo"><span class="theme-dot"></span>Лориен</button>'
     + '<button class="theme-swatch" data-a="palette" data-v="ocean"><span class="theme-dot"></span>Океан</button>'
-    + '<button class="theme-swatch" data-a="palette" data-v="emerald"><span class="theme-dot"></span>Изумруд</button>'
     + '<button class="theme-swatch" data-a="palette" data-v="rose"><span class="theme-dot"></span>Роза</button>'
     + '<button class="theme-swatch" data-a="palette" data-v="amber"><span class="theme-dot"></span>Янтарь</button>'
     + '</div></div>';
@@ -359,6 +357,7 @@ var ATT=[
   {k:'U',l:'Уваж.',cl:'cu',color:'#F59E0B'},
   {k:'N',l:'Неув.',cl:'cn',color:'#EF4444'}
 ];
+var PALETTES=['indigo','ocean','rose','amber'];
 var S={
   mode:'android',view:'login',role:'HEADMAN',rl:'Староста',
   user:'Волкова Ольга',step:'login',tab:0,dt:'journal',
@@ -990,9 +989,9 @@ function rSettings(desk){
     +'<span>Автоматически (по системе)</span></label>'
     +'<div style="font-size:13px;font-weight:800;color:var(--tx);margin:16px 0 9px">Цветовой акцент</div>'
     +'<div class="theme-setting-grid">'
-    +'<button class="theme-swatch'+(S.palette==='indigo'?' on':'')+'" data-a="palette" data-v="indigo"><span class="theme-dot"></span>Индиго</button>'
+    +'<button class="theme-swatch'+(S.palette==='indigo'?' on':'')+'" data-a="palette" data-v="indigo"><span class="theme-dot"></span>Лориен</button>'
     +'<button class="theme-swatch'+(S.palette==='ocean'?' on':'')+'" data-a="palette" data-v="ocean"><span class="theme-dot"></span>Океан</button>'
-    +'<button class="theme-swatch'+(S.palette==='emerald'?' on':'')+'" data-a="palette" data-v="emerald"><span class="theme-dot"></span>Изумруд</button>'
+
     +'<button class="theme-swatch'+(S.palette==='rose'?' on':'')+'" data-a="palette" data-v="rose"><span class="theme-dot"></span>Роза</button>'
     +'<button class="theme-swatch'+(S.palette==='amber'?' on':'')+'" data-a="palette" data-v="amber"><span class="theme-dot"></span>Янтарь</button>'
     +'</div></div>';
@@ -1364,6 +1363,7 @@ function doApprove(){
 }
 
 function applyTheme(){
+  if(PALETTES.indexOf(S.palette)<0)S.palette='indigo';
   var isDark=S.tm==='dark'||(S.tm==='auto'&&window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches);
   document.body.setAttribute('data-palette',S.palette||'indigo');
   if(isDark)document.body.setAttribute('data-dark','1');else document.body.removeAttribute('data-dark');
