@@ -4,8 +4,12 @@
 
 Староста отмечает посещаемость, преподаватель и куратор проверяют записи, а руководство получает общую статистику.
 
-## Скачать
+## Сайт, демо и скачивание
 
-- [Скачать APK для Android](https://github.com/sadfsadfs345345/attendance-journal/releases/latest/download/app-debug.apk)
-- [Скачать EXE для Windows](https://github.com/sadfsadfs345345/attendance-journal/releases/latest/download/AttendanceJournal-Setup.exe)
-- [Открыть страницу всех файлов и релизов](https://github.com/sadfsadfs345345/attendance-journal/releases/latest)
+[Открыть сайт, посмотреть демо и скачать нужные файлы](https://sadfsadfs345345.github.io/attendance-journal/)
+
+Также доступны прямые ссылки:
+
+- [Android APK](https://github.com/sadfsadfs345345/attendance-journal/releases/latest/download/app-debug.apk)
+- [Windows EXE](https://github.com/sadfsadfs345345/attendance-journal/releases/latest/download/AttendanceJournal-Setup.exe)
+- [Все релизы](https://github.com/sadfsadfs345345/attendance-journal/releases/latest)
