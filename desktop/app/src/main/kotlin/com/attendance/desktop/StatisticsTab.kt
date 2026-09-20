@@ -137,11 +137,11 @@ fun StatisticsTab() {
                         Spacer(Modifier.width(12.dp))
                         if (risk) Surface(shape = RoundedCornerShape(8.dp), color = Color(0xFFE53935).copy(0.1f)) {
                             Text("⚠ < 75%", color = Color(0xFFE53935),
-                                Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                                 fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
                         } else Surface(shape = RoundedCornerShape(8.dp), color = Color(0xFF43A047).copy(0.1f)) {
                             Text("✓ OK", color = Color(0xFF43A047),
-                                Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                                 fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
                         }
                     }
