@@ -35,4 +35,18 @@ object AppSettings {
     fun saveStudents(list: List<String>) {
         prefs.put("students_csv", list.joinToString("\n"))
     }
+
+    /** Offline-first attendance cache. The backend can replace this repository later without changing the UI. */
+    fun attendanceKey(date: String, subject: String): String =
+        "attendance_${date.trim()}_${subject.trim().replace(Regex("\\s+"), "_")}"
+
+    fun getAttendance(key: String, studentId: Int): Int? {
+        val raw = prefs.get("$key.$studentId", "")
+        return raw.toIntOrNull()
+    }
+
+    fun saveAttendance(key: String, studentId: Int, status: Int?) {
+        if (status == null) prefs.remove("$key.$studentId")
+        else prefs.putInt("$key.$studentId", status)
+    }
 }
