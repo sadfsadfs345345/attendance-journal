@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.attendance.desktop.model.Role
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -25,7 +26,7 @@ val STATUS_FULL = listOf("Присутствует", "Уважительная",
 val STATUS_COLORS = listOf(Color(0xFF388E3C), Color(0xFFFFA000), Color(0xFFD32F2F))
 
 @Composable
-fun AttendanceTab(onLessonClosed: (ArchivedLesson) -> Unit = {}) {
+fun AttendanceTab(role: Role = Role.HEADMAN, onLessonClosed: (ArchivedLesson) -> Unit = {}) {
     val today   = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date())
     var subject by remember { mutableStateOf("Математика") }
     var selDate by remember { mutableStateOf(today) }
@@ -42,7 +43,7 @@ fun AttendanceTab(onLessonClosed: (ArchivedLesson) -> Unit = {}) {
     Column(Modifier.fillMaxSize()) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically) {
-            Text("Журнал посещаемости", fontSize = 22.sp, fontWeight = FontWeight.Bold)
+            Text("Журнал посещаемости · ${role.displayName}", fontSize = 22.sp, fontWeight = FontWeight.Bold)
             AssistChip(onClick = {},
                 label = { Text("Присут: ${records.values.count { it == 0 }} / ${students.size}") },
                 leadingIcon = { Icon(Icons.Default.CalendarToday, null, Modifier.size(16.dp)) })
@@ -85,7 +86,7 @@ fun AttendanceTab(onLessonClosed: (ArchivedLesson) -> Unit = {}) {
                             val sel = records[student.id] == si
                             FilterChip(
                                 selected = sel,
-                                enabled = !closed,
+                                enabled = !closed && role != Role.STUDENT && role != Role.DIRECTOR,
                                 onClick = {
                                     if (sel) { records.remove(student.id); AppSettings.saveAttendance(attendanceKey, student.id, null) }
                                     else { records[student.id] = si; AppSettings.saveAttendance(attendanceKey, student.id, si) }
@@ -141,7 +142,7 @@ fun AttendanceTab(onLessonClosed: (ArchivedLesson) -> Unit = {}) {
                 onLessonClosed(ArchivedLesson(selDate, subject, "ИС-21", students.size, "Демо-куратор"))
                 closed = true
                 saveMsg = "✓ Занятие закрыто и добавлено в архив"
-            }, enabled = !closed) { Text(if (closed) "Занятие закрыто" else "Закрыть занятие") }
+            }, enabled = !closed && role == Role.CURATOR) { Text(if (closed) "Занятие закрыто" else "Закрыть занятие") }
 
             if (saveMsg.isNotEmpty())
                 Text(saveMsg, fontSize = 12.sp,
