@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.*
+import com.attendance.app.data.NativeAttendanceStore
 import com.attendance.app.ui.AttendanceScreen
 import com.attendance.app.ui.LoginScreen
 import com.attendance.app.ui.UserRole
@@ -16,9 +17,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState); enableEdgeToEdge(); prefs = getSharedPreferences("attendance_prefs", MODE_PRIVATE)
         setContent { AttendanceTheme {
+            val store = remember { NativeAttendanceStore(applicationContext) }
             var current by remember { mutableStateOf<Pair<UserRole, String>?>(null) }
             if (current == null) LoginScreen { role, name -> current = role to name }
-            else AttendanceScreen(current!!.first, current!!.second) { current = null; prefs.edit().clear().apply() }
+            else AttendanceScreen(current!!.first, current!!.second, store) { current = null; prefs.edit().clear().apply() }
         } }
     }
 }

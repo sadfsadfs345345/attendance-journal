@@ -1,5 +1,6 @@
 package com.attendance.app.ui
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.attendance.app.data.NativeAttendanceStore
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -47,13 +49,15 @@ data class ArchivedLesson(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AttendanceScreen(role: UserRole, userName: String, onLogout: () -> Unit) {
+fun AttendanceScreen(role: UserRole, userName: String, store: NativeAttendanceStore, onLogout: () -> Unit) {
+    var subject by remember { mutableStateOf("Математика") }
+    var lessonDate by remember { mutableStateOf(SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())) }
     val allStudents = remember {
         listOf("Козлова Мария", "Иванов Иван", "Морозов Дмитрий", "Новиков Алексей",
             "Петрова Анна", "Сидоров Пётр", "Фёдорова Елена", "Волкова Ольга")
             .mapIndexed { i, name -> AttendanceEntry(i.toLong(), name, "ИС-21", unexcused = i % 4, excused = i % 3) }
     }
-    val initial = remember(role, userName) {
+    val initial = remember(role, userName, subject, lessonDate) {
         val visible = if (role == UserRole.STUDENT) {
             allStudents.filter { it.name.equals(userName, ignoreCase = true) }.ifEmpty { allStudents.take(1) }
         } else allStudents
@@ -61,12 +65,13 @@ fun AttendanceScreen(role: UserRole, userName: String, onLogout: () -> Unit) {
             if (role == UserRole.CURATOR && i == 0) e.copy(headman = AttendanceStatus.PRESENT, teacher = AttendanceStatus.UNEXCUSED)
             else if (role == UserRole.CURATOR && i == 3) e.copy(headman = AttendanceStatus.EXCUSED, teacher = AttendanceStatus.PRESENT)
             else e
+        }.map { entry ->
+            val saved = store.status(lessonDate, subject, entry.name, entry.final.name)
+            entry.copy(final = runCatching { AttendanceStatus.valueOf(saved) }.getOrDefault(entry.final))
         }
     }
     var entries by remember { mutableStateOf(initial) }
     var selectedTab by remember { mutableStateOf(0) }
-    var subject by remember { mutableStateOf("Математика") }
-    var lessonDate by remember { mutableStateOf(SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())) }
     var closed by remember { mutableStateOf(false) }
     var saved by remember { mutableStateOf(false) }
     var resolved by remember { mutableStateOf(setOf<Long>()) }
@@ -111,13 +116,21 @@ fun AttendanceScreen(role: UserRole, userName: String, onLogout: () -> Unit) {
                         entries = entries.map { if (it.id == id) it.copy(final = status,
                             headman = if (role == UserRole.HEADMAN) status else it.headman,
                             teacher = if (role == UserRole.TEACHER) status else it.teacher) else it }
+                        entries.firstOrNull { it.id == id }?.let { store.saveStatus(lessonDate, subject, it.name, status.name) }
                         saved = false
                     },
                     onResolve = { id, useTeacher ->
                         entries = entries.map { if (it.id == id) it.copy(final = if (useTeacher) it.teacher else it.headman) else it }
+                        entries.firstOrNull { it.id == id }?.let { entry ->
+                            store.saveStatus(lessonDate, subject, entry.name, (if (useTeacher) entry.teacher else entry.headman).name)
+                        }
                         resolved = resolved + id
                     },
-                    onMarkAll = { entries = entries.map { it.copy(final = AttendanceStatus.PRESENT) }; saved = false },
+                    onMarkAll = {
+                        entries = entries.map { it.copy(final = AttendanceStatus.PRESENT) }
+                        entries.forEach { store.saveStatus(lessonDate, subject, it.name, AttendanceStatus.PRESENT.name) }
+                        saved = false
+                    },
                     onSave = { saved = true; notice = "Изменения сохранены локально" },
                     onClose = {
                         if (conflicts == 0) { archive = archive + ArchivedLesson(lessonDate, subject, "ИС-21", entries.size, userName); closed = true; notice = "Занятие закрыто и отправлено в архив" }
