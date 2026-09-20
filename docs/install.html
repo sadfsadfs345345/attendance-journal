@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>📋 Журнал посещаемости — Установка</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1976D2 0%, #00897B 100%);
+      min-height: 100vh; display: flex; align-items: center;
+      justify-content: center; padding: 20px;
+    }
+    .card {
+      background: #fff; border-radius: 24px; padding: 48px 40px;
+      max-width: 520px; width: 100%;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.25); text-align: center;
+    }
+    .icon { font-size: 64px; margin-bottom: 12px; }
+    h1 { font-size: 26px; font-weight: 700; color: #1a1a1a; margin-bottom: 8px; }
+    .subtitle { color: #666; font-size: 15px; margin-bottom: 36px; line-height: 1.5; }
+    .btn {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; padding: 16px 24px; border-radius: 14px; font-size: 16px;
+      font-weight: 600; text-decoration: none; cursor: pointer; border: none;
+      transition: transform 0.15s, box-shadow 0.15s; margin-bottom: 10px;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-android { background: linear-gradient(135deg,#34A853,#0F9D58); color:#fff; box-shadow:0 6px 20px rgba(52,168,83,.4); }
+    .btn-android:hover { box-shadow:0 10px 28px rgba(52,168,83,.5); }
+    .btn-windows { background: linear-gradient(135deg,#0078D4,#106EBE); color:#fff; box-shadow:0 6px 20px rgba(0,120,212,.4); }
+    .btn-windows:hover { box-shadow:0 10px 28px rgba(0,120,212,.5); }
+    .btn-linux { background: linear-gradient(135deg,#E95420,#C43F15); color:#fff; box-shadow:0 6px 20px rgba(233,84,32,.4); }
+    .btn-outline { background:transparent; border:2px solid #e0e0e0; color:#444; }
+    .btn-outline:hover { background:#f5f5f5; }
+    .steps { background:#f8f9fa; border-radius:14px; padding:20px; text-align:left; margin-top:24px; }
+    .steps-title { font-weight:600; color:#333; margin-bottom:12px; font-size:14px; }
+    .step { display:flex; gap:10px; margin-bottom:8px; font-size:13px; color:#555; line-height:1.5; }
+    .step-num { background:#1976D2; color:#fff; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; margin-top:1px; }
+    .warning { background:#FFF8E1; border:1px solid #FFE082; border-radius:10px; padding:12px 16px; font-size:13px; color:#7c6000; text-align:left; margin-top:16px; line-height:1.5; }
+    .divider { border:none; border-top:1px solid #eee; margin:24px 0; }
+    .tab-row { display:flex; gap:8px; margin-bottom:20px; }
+    .tab { flex:1; padding:10px; border-radius:10px; border:2px solid #e0e0e0; background:#fff; cursor:pointer; font-size:13px; font-weight:600; color:#666; transition:all .15s; }
+    .tab.active { border-color:#1976D2; background:#e3f2fd; color:#1976D2; }
+    .version-info { font-size:12px; color:#aaa; margin-top:20px; }
+    #latest-version { font-weight:600; color:#555; }
+    .status-msg { font-size:13px; color:#aaa; padding:8px 0; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="icon">📋</div>
+  <h1>Журнал посещаемости</h1>
+  <p class="subtitle">Отметка присутствия, цепочка подтверждений, статистика</p>
+
+  <div class="tab-row">
+    <button class="tab" onclick="showPlatform('android')">📱 Android</button>
+    <button class="tab" onclick="showPlatform('windows')">🖥 Windows</button>
+    <button class="tab" onclick="showPlatform('linux')">🐧 Linux / macOS</button>
+  </div>
+
+  <!-- ANDROID -->
+  <div id="android-section" style="display:none">
+    <a id="apk-btn" class="btn btn-android" href="https://github.com/sadfsadfs345345/attendance-journal/releases/latest/download/app-debug.apk">
+      <span>📲</span> Скачать APK для Android
+    </a>
+    <div class="steps">
+      <div class="steps-title">📖 Как установить:</div>
+      <div class="step"><div class="step-num">1</div><span>Нажмите кнопку — APK скачается автоматически</span></div>
+      <div class="step"><div class="step-num">2</div><span>Откройте файл из папки «Загрузки»</span></div>
+      <div class="step"><div class="step-num">3</div><span>Если появится предупреждение — нажмите «Разрешить» → «Установить»</span></div>
+      <div class="step"><div class="step-num">4</div><span>Иконка появится на рабочем столе ✨</span></div>
+    </div>
+    <div class="warning">⚠️ Андроид может спросить разрешение для установки из неизвестных источников — это безопасно.</div>
+  </div>
+
+  <!-- WINDOWS -->
+  <div id="windows-section" style="display:none">
+    <a id="exe-btn" class="btn btn-windows" href="https://github.com/sadfsadfs345345/attendance-journal/releases">
+      <span>📥</span> <span id="exe-btn-text">Загрузка...</span>
+    </a>
+    <div id="exe-status" class="status-msg">⏳ Поиск файла...</div>
+    <div class="steps">
+      <div class="steps-title">📖 Как установить:</div>
+      <div class="step"><div class="step-num">1</div><span>Скачайте <b>AttendanceJournal-Setup.exe</b></span></div>
+      <div class="step"><div class="step-num">2</div><span>Запустите файл — установщик сам всё сделает ✨</span></div>
+      <div class="step"><div class="step-num">3</div><span>Ярлык «Журнал посещаемости» появится на рабочем столе</span></div>
+    </div>
+    <div class="warning">⚠️ Windows SmartScreen может предупредить об неизвестном издателе. Нажмите «Подробнее» → «Всё равно запустить» — это безопасно.</div>
+  </div>
+
+  <!-- LINUX / MACOS -->
+  <div id="linux-section" style="display:none">
+    <a id="jar-btn" class="btn btn-linux" href="https://github.com/sadfsadfs345345/attendance-journal/releases" target="_blank">
+      📦 Скачать JAR (последняя версия)
+    </a>
+    <div class="steps">
+      <div class="steps-title">📖 Запуск через терминал:</div>
+      <div class="step"><div class="step-num">1</div><span>Java 17+: <code>sudo apt install openjdk-17-jdk</code></span></div>
+      <div class="step"><div class="step-num">2</div><span>Скачайте JAR и запустите: <code>java -jar attendance-journal.jar</code></span></div>
+    </div>
+  </div>
+
+  <div class="version-info">
+    Версия: <span id="latest-version">загрузка...</span> &bull;
+    <a href="https://github.com/sadfsadfs345345/attendance-journal" target="_blank" style="color:#1976D2">Исходный код</a>
+  </div>
+</div>
+
+<script>
+  var REPO = 'sadfsadfs345345/attendance-journal';
+
+  function detectPlatform() {
+    var ua = navigator.userAgent.toLowerCase();
+    if (/android/.test(ua)) return 'android';
+    if (/win/.test(ua)) return 'windows';
+    return 'linux';
+  }
+
+  function showPlatform(name) {
+    ['android','windows','linux'].forEach(function(p) {
+      var el = document.getElementById(p + '-section');
+      if (el) el.style.display = (p === name) ? 'block' : 'none';
+    });
+    document.querySelectorAll('.tab').forEach(function(t, i) {
+      t.classList.toggle('active', ['android','windows','linux'][i] === name);
+    });
+  }
+
+  fetch('https://api.github.com/repos/' + REPO + '/releases?per_page=20')
+    .then(function(r) { return r.json(); })
+    .then(function(releases) {
+      var apkUrl = null, exeUrl = null, jarUrl = null;
+      var androidVer = '', windowsVer = '';
+
+      for (var i = 0; i < releases.length; i++) {
+        var rel = releases[i];
+        var assets = rel.assets || [];
+        for (var j = 0; j < assets.length; j++) {
+          var a = assets[j];
+          if (!apkUrl && a.name.endsWith('.apk')) {
+            apkUrl = a.browser_download_url; androidVer = rel.tag_name;
+          }
+          if (!exeUrl && a.name.endsWith('.exe')) {
+            exeUrl = a.browser_download_url; windowsVer = rel.tag_name;
+          }
+          if (!jarUrl && a.name.endsWith('.jar')) {
+            jarUrl = a.browser_download_url;
+          }
+        }
+        if (apkUrl && exeUrl && jarUrl) break;
+      }
+
+      if (apkUrl) document.getElementById('apk-btn').href = apkUrl;
+
+      var exeStatus = document.getElementById('exe-status');
+      var exeBtnText = document.getElementById('exe-btn-text');
+      if (exeUrl) {
+        document.getElementById('exe-btn').href = exeUrl;
+        document.getElementById('exe-btn').setAttribute('download', 'AttendanceJournal-Setup.exe');
+        exeBtnText.textContent = 'Скачать AttendanceJournal-Setup.exe';
+        exeStatus.style.display = 'none';
+      } else {
+        exeBtnText.textContent = 'Смотреть все выпуски';
+        exeStatus.textContent = '⏳ EXE сейчас собирается — загляните через 10 мин';
+      }
+
+      if (jarUrl) document.getElementById('jar-btn').href = jarUrl;
+
+      var parts = [];
+      if (androidVer) parts.push('Android ' + androidVer);
+      if (windowsVer) parts.push('Windows ' + windowsVer);
+      document.getElementById('latest-version').textContent = parts.length ? parts.join(' • ') : 'см. Releases';
+    })
+    .catch(function() {
+      document.getElementById('latest-version').textContent = 'см. Releases';
+      var s = document.getElementById('exe-status');
+      if (s) s.style.display = 'none';
+    });
+
+  showPlatform(detectPlatform());
+</script>
+</body>
+</html>
