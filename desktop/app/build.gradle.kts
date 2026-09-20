@@ -34,7 +34,7 @@ compose.desktop {
                 shortcut = true
                 dirChooser = true
                 perUserInstall = true
-                iconFile.set(project.file("src/main/resources/icon.ico"))
+                // Icon is optional: the repository build uses jpackage and ships without a binary icon asset.
             }
         }
     }

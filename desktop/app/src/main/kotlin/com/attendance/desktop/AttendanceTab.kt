@@ -20,9 +20,9 @@ import java.util.*
 
 data class DemoStudent(val id: Int, val name: String)
 
-val STATUSES    = listOf("Присут.", "Уваж.", "Неуваж.", "Болен")
-val STATUS_FULL = listOf("Присутствует", "Уважительная", "Неуважительная", "Болезнь")
-val STATUS_COLORS = listOf(Color(0xFF388E3C), Color(0xFFFFA000), Color(0xFFD32F2F), Color(0xFF7B1FA2))
+val STATUSES    = listOf("Присут.", "Уваж.", "Неуваж.")
+val STATUS_FULL = listOf("Присутствует", "Уважительная", "Неуважительная")
+val STATUS_COLORS = listOf(Color(0xFF388E3C), Color(0xFFFFA000), Color(0xFFD32F2F))
 
 @Composable
 fun AttendanceTab() {
