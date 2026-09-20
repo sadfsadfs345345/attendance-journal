@@ -1,185 +1,1329 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>📋 Журнал посещаемости — Установка</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #1976D2 0%, #00897B 100%);
-      min-height: 100vh; display: flex; align-items: center;
-      justify-content: center; padding: 20px;
-    }
-    .card {
-      background: #fff; border-radius: 24px; padding: 48px 40px;
-      max-width: 520px; width: 100%;
-      box-shadow: 0 32px 80px rgba(0,0,0,0.25); text-align: center;
-    }
-    .icon { font-size: 64px; margin-bottom: 12px; }
-    h1 { font-size: 26px; font-weight: 700; color: #1a1a1a; margin-bottom: 8px; }
-    .subtitle { color: #666; font-size: 15px; margin-bottom: 36px; line-height: 1.5; }
-    .btn {
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-      width: 100%; padding: 16px 24px; border-radius: 14px; font-size: 16px;
-      font-weight: 600; text-decoration: none; cursor: pointer; border: none;
-      transition: transform 0.15s, box-shadow 0.15s; margin-bottom: 10px;
-    }
-    .btn:active { transform: scale(0.97); }
-    .btn-android { background: linear-gradient(135deg,#34A853,#0F9D58); color:#fff; box-shadow:0 6px 20px rgba(52,168,83,.4); }
-    .btn-android:hover { box-shadow:0 10px 28px rgba(52,168,83,.5); }
-    .btn-windows { background: linear-gradient(135deg,#0078D4,#106EBE); color:#fff; box-shadow:0 6px 20px rgba(0,120,212,.4); }
-    .btn-windows:hover { box-shadow:0 10px 28px rgba(0,120,212,.5); }
-    .btn-linux { background: linear-gradient(135deg,#E95420,#C43F15); color:#fff; box-shadow:0 6px 20px rgba(233,84,32,.4); }
-    .btn-outline { background:transparent; border:2px solid #e0e0e0; color:#444; }
-    .btn-outline:hover { background:#f5f5f5; }
-    .steps { background:#f8f9fa; border-radius:14px; padding:20px; text-align:left; margin-top:24px; }
-    .steps-title { font-weight:600; color:#333; margin-bottom:12px; font-size:14px; }
-    .step { display:flex; gap:10px; margin-bottom:8px; font-size:13px; color:#555; line-height:1.5; }
-    .step-num { background:#1976D2; color:#fff; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; margin-top:1px; }
-    .warning { background:#FFF8E1; border:1px solid #FFE082; border-radius:10px; padding:12px 16px; font-size:13px; color:#7c6000; text-align:left; margin-top:16px; line-height:1.5; }
-    .divider { border:none; border-top:1px solid #eee; margin:24px 0; }
-    .tab-row { display:flex; gap:8px; margin-bottom:20px; }
-    .tab { flex:1; padding:10px; border-radius:10px; border:2px solid #e0e0e0; background:#fff; cursor:pointer; font-size:13px; font-weight:600; color:#666; transition:all .15s; }
-    .tab.active { border-color:#1976D2; background:#e3f2fd; color:#1976D2; }
-    .version-info { font-size:12px; color:#aaa; margin-top:20px; }
-    #latest-version { font-weight:600; color:#555; }
-    .status-msg { font-size:13px; color:#aaa; padding:8px 0; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Журнал посещаемости · Premium prototype · v6</title>
+<style>
+:root{--pr:#4F46E5;--pr-l:#EEF2FF;--pr-d:#3730A3;--gr:#10B981;--rd:#EF4444;--or:#F59E0B;--pu:#8B5CF6;--bg:#F4F6FB;--sf:#FFFFFF;--s2:#F0F2F8;--br:#E2E6F0;--tx:#1A1D2E;--tx2:#6B7490;--tx3:#9EA3B8;--sh:0 1px 3px rgba(30,40,80,.07),0 4px 12px rgba(30,40,80,.04);--r:12px;}
+body[data-dark]{--pr:#818CF8;--pr-l:#1C1F3D;--pr-d:#A5B4FC;--bg:#0D0F1C;--sf:#141729;--s2:#1A1E35;--br:#252A48;--tx:#E2E5F4;--tx2:#8B91BE;--tx3:#515778;--sh:0 1px 3px rgba(0,0,0,.3),0 4px 12px rgba(0,0,0,.2);}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--tx);font-size:14px;line-height:1.5}
+#app{padding-top:52px;min-height:100vh}
+.topbar{position:fixed;top:0;left:0;right:0;height:52px;background:var(--sf);border-bottom:1px solid var(--br);display:flex;align-items:center;gap:12px;padding:0 16px;z-index:100;}
+.tbar-brand{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+.tbar-logo{width:32px;height:32px;background:var(--pr);border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0}
+.tbar-logo svg{width:18px;height:18px}
+.tbar-title{font-weight:800;font-size:14px;color:var(--tx);letter-spacing:-.01em;white-space:nowrap}
+.tbar-acts{display:flex;align-items:center;gap:6px}
+.sw{background:var(--s2);border:1px solid var(--br);border-radius:7px;color:var(--tx2);cursor:pointer;font-size:11px;font-weight:700;padding:5px 10px;display:flex;align-items:center;gap:5px;transition:all .15s}
+.sw svg{width:14px;height:14px}
+.sw.on{background:var(--pr-l);color:var(--pr);border-color:var(--pr)}
+.a-outer{display:flex;justify-content:center;padding:20px 16px;min-height:calc(100vh - 52px)}
+.a-phone{width:360px;border-radius:32px;background:var(--bg);box-shadow:0 12px 48px rgba(0,0,0,.16),0 0 0 1.5px var(--br);overflow:hidden;display:flex;flex-direction:column;height:706px}
+.ph{background:var(--pr);padding:16px 20px 14px;flex-shrink:0}.ph-top{display:flex;align-items:center;justify-content:space-between}
+.ph-t{font-size:15px;font-weight:800;color:#fff;letter-spacing:-.02em}.ph-s{font-size:11px;color:rgba(255,255,255,.65);margin-top:3px}
+.ph-x{background:rgba(255,255,255,.15);border:none;border-radius:9px;color:#fff;cursor:pointer;padding:7px;display:flex;align-items:center;justify-content:center;width:34px;height:34px}
+.ph-x svg{width:18px;height:18px}.pbody{flex:1;overflow-y:auto;padding:12px;background:var(--bg)}
+.pnav{display:flex;background:var(--sf);border-top:1px solid var(--br);flex-shrink:0}
+.pntab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:8px 2px;border:none;background:none;color:var(--tx3);font-size:9px;font-weight:700;cursor:pointer;letter-spacing:.02em;line-height:1;border-top:2px solid transparent;transition:color .15s,border-color .15s;position:relative}
+.pntab svg{width:22px;height:22px}.pntab.on{color:var(--pr);border-top-color:var(--pr)}
+.nbadge{position:absolute;top:4px;right:calc(50% - 14px);background:var(--rd);color:#fff;font-size:9px;font-weight:800;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 4px}
+.d-out{display:flex;height:calc(100vh - 52px);overflow:hidden}
+.drail{width:220px;background:var(--sf);border-right:1px solid var(--br);display:flex;flex-direction:column;flex-shrink:0}
+.drail-logo{padding:18px 18px 14px;border-bottom:1px solid var(--br)}
+.drail-logo-top{display:flex;align-items:center;gap:10px}.drail-logo-icon{width:36px;height:36px;background:var(--pr);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0}
+.drail-logo-icon svg{width:20px;height:20px}
+.drail-logo-name{font-size:13px;font-weight:800;color:var(--tx);line-height:1.2}.drail-logo-role{font-size:11px;color:var(--tx2);margin-top:1px}
+.drail-nav{flex:1;padding:8px 0;overflow-y:auto}.drail-foot{padding:8px 0;border-top:1px solid var(--br)}
+.ri{display:flex;align-items:center;gap:10px;padding:10px 16px;border:none;background:none;color:var(--tx2);font-size:13px;font-weight:600;cursor:pointer;width:100%;text-align:left;border-left:3px solid transparent;transition:all .15s}
+.ri svg{width:18px;height:18px;flex-shrink:0}.ri.on{background:var(--pr-l);color:var(--pr);border-left-color:var(--pr);font-weight:700}.ri:hover:not(.on){background:var(--s2);color:var(--tx)}
+.ri-badge{margin-left:auto;background:var(--rd);color:#fff;font-size:10px;font-weight:800;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 5px}
+.dmain{flex:1;overflow-y:auto;padding:24px 28px}.dmain-inner{max-width:860px}
+.phd{font-size:20px;font-weight:800;color:var(--tx);margin-bottom:20px;letter-spacing:-.02em}
+.card{background:var(--sf);border-radius:var(--r);box-shadow:var(--sh);padding:16px;margin-bottom:12px;border:1px solid var(--br)}
+.login-shell{min-height:calc(100vh - 52px);display:flex;align-items:center;justify-content:center;padding:24px}
+.login-card{background:var(--sf);border-radius:20px;box-shadow:0 8px 40px rgba(30,40,80,.11);border:1px solid var(--br);width:100%;max-width:420px;padding:36px 32px}
+.llogo{text-align:center;margin-bottom:28px}
+.llogo-icon{width:56px;height:56px;background:var(--pr);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;color:#fff}
+.llogo-icon svg{width:28px;height:28px}
+.llogo h1{font-size:20px;font-weight:900;color:var(--tx);letter-spacing:-.03em}.llogo p{font-size:13px;color:var(--tx2);margin-top:5px}
+.lform{display:flex;flex-direction:column;gap:14px}.fld{display:flex;flex-direction:column;gap:5px}
+.fld label{font-size:10px;font-weight:800;letter-spacing:.08em;color:var(--tx2);text-transform:uppercase}
+.demo-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);border-radius:6px;font-size:10px;font-weight:800;color:#92400E;letter-spacing:.06em;margin-bottom:6px}
+body[data-dark] .demo-badge{color:#FBB940;border-color:rgba(245,158,11,.2)}
+.demo-badge svg{width:14px;height:14px;flex-shrink:0}
+.inp{border:1.5px solid var(--br);border-radius:10px;font-size:14px;padding:11px 14px;background:var(--sf);color:var(--tx);width:100%;transition:border-color .15s,box-shadow .15s}
+.inp:focus{outline:none;border-color:var(--pr);box-shadow:0 0 0 3px var(--pr-l)}.inp.err{border-color:var(--rd)}
+.iw{position:relative}.iw .inp{padding-left:42px;padding-right:44px}
+.iw-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--tx3);display:flex;align-items:center;pointer-events:none}
+.iw-icon svg{width:16px;height:16px}
+.eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--tx2);display:flex;align-items:center;padding:4px}
+.eye svg{width:17px;height:17px}
+.errmsg{font-size:11px;color:var(--rd);font-weight:700;min-height:16px}
+.auth-link{text-align:center;font-size:13px;color:var(--tx2);margin-top:4px}
+.lnk{color:var(--pr);font-weight:700;cursor:pointer}.lnk:hover{text-decoration:underline}
+.rpills{display:flex;flex-wrap:wrap;gap:6px;margin-top:3px}
+.rpill{padding:6px 14px;border-radius:20px;border:1.5px solid var(--br);background:var(--sf);color:var(--tx2);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s}.rpill.on{background:var(--pr);color:#fff;border-color:var(--pr)}
+.btn{display:block;width:100%;padding:12px;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;letter-spacing:-.01em}
+.btn-pr{background:var(--pr);color:#fff}.btn-pr:hover{background:var(--pr-d)}
+.btn-danger{background:rgba(239,68,68,.08);color:var(--rd);border:1px solid rgba(239,68,68,.2)}
+.btn-ol{display:block;width:100%;padding:11px;border:1.5px solid var(--br);border-radius:10px;background:none;font-size:13px;font-weight:700;cursor:pointer;color:var(--tx2);transition:all .15s;text-align:center}
+.btn-ok{background:var(--gr);color:#fff;border:none;border-radius:7px;cursor:pointer;font-size:13px;padding:6px 12px;font-weight:700}
+.gstrip{display:flex;align-items:center;justify-content:space-between;background:var(--sf);border-radius:10px;padding:11px 14px;margin-bottom:10px;box-shadow:var(--sh);border:1px solid var(--br);flex-wrap:wrap;gap:6px}
+.gd{font-size:12px;font-weight:600;color:var(--tx2);display:flex;align-items:center;gap:5px}
+.gb{background:var(--pr-l);color:var(--pr);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700}
+.slist{display:flex;flex-direction:column;gap:8px}
+.jrow{display:flex;align-items:center;gap:10px;padding:11px 12px}
+.av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0}
+.jinfo{flex:1;min-width:0}
+.jname{font-size:13px;font-weight:700;line-height:1.3}
+.jsub{font-size:11px;color:var(--tx2);margin-top:1px}
+.chips{display:flex;gap:5px;flex-shrink:0}
+.chip{padding:5px 10px;border-radius:7px;border:none;font-size:11px;font-weight:700;cursor:pointer;transition:opacity .15s}
+.chip.on{opacity:1}.chip:not(.on){opacity:.28}.chip:not(.on):hover{opacity:.55}
+.cp{background:rgba(16,185,129,.12);color:#059669}
+.cu{background:rgba(245,158,11,.12);color:#D97706}
+.cn{background:rgba(239,68,68,.12);color:#DC2626}
+.hm-badge{display:inline-flex;align-items:center;margin-left:5px;font-size:10px;font-weight:800;background:var(--pr-l);color:var(--pr);border-radius:5px;padding:2px 7px;vertical-align:middle;letter-spacing:.02em}
+.hm-btn{background:none;border:1.5px solid var(--br);border-radius:7px;cursor:pointer;font-size:14px;padding:4px 7px;line-height:1;color:var(--tx2);transition:all .15s;flex-shrink:0}
+.hm-btn.active{background:rgba(245,158,11,.1);border-color:#F59E0B;color:#D97706}
+.jact{display:flex;align-items:center;gap:10px;margin-top:14px}
+.conf-banner{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.22);border-radius:10px;padding:10px 14px;font-size:13px;font-weight:700;color:var(--rd);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.conf-row{background:rgba(245,158,11,.05);border:1px solid rgba(245,158,11,.2);border-radius:8px;padding:8px 12px;margin-bottom:4px;display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.conf-lbl{font-size:11px;font-weight:800;color:var(--tx2)}
+.conf-chip{display:inline-flex;align-items:center;border-radius:6px;padding:3px 9px;font-size:12px;font-weight:700}
+.accept-btn{background:var(--sf);border:1px solid var(--br);border-radius:6px;cursor:pointer;font-size:11px;font-weight:700;padding:3px 9px;color:var(--tx2);white-space:nowrap;transition:all .15s}
+.accept-btn:hover{border-color:var(--pr);color:var(--pr)}
+.session-closed-banner{background:rgba(16,185,129,.07);border:1px solid rgba(16,185,129,.25);border-radius:10px;padding:10px 14px;font-size:13px;font-weight:700;color:#059669;margin-bottom:10px;text-align:center;display:flex;align-items:center;gap:8px;justify-content:center}
+.unfill-banner{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.22);border-radius:10px;padding:9px 13px;font-size:12px;font-weight:700;color:#92400E;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+body[data-dark] .unfill-banner{color:#FBB940}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.stat-tile{background:var(--sf);border-radius:10px;padding:12px 10px;text-align:center;box-shadow:var(--sh);border:1px solid var(--br)}
+.stat-v{font-size:22px;font-weight:900;line-height:1.1}
+.stat-l{font-size:9px;font-weight:800;color:var(--tx2);margin-top:4px;letter-spacing:.05em;text-transform:uppercase}
+.pie-card{text-align:center;padding:20px 16px}
+.gname{font-size:11px;font-weight:800;color:var(--pr);margin-bottom:14px;letter-spacing:.06em;text-transform:uppercase}
+.leg{display:flex;gap:16px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+.legi{font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.scard{display:flex;align-items:center;gap:12px;background:var(--sf);border-radius:12px;padding:12px 14px;box-shadow:var(--sh);cursor:pointer;transition:box-shadow .2s;border:1px solid var(--br);margin-bottom:8px}
+.scard:hover{box-shadow:0 4px 20px rgba(79,70,229,.14)}
+.scard.danger{border-color:rgba(239,68,68,.35)}
+.scard.warn{border-color:rgba(245,158,11,.35)}
+@keyframes glow{from{box-shadow:0 0 0 1.5px rgba(239,68,68,.25);}to{box-shadow:0 0 0 1.5px rgba(239,68,68,.25),0 0 16px rgba(239,68,68,.12);}}
+.scard.danger{animation:glow 2s ease-in-out infinite alternate}
+.scinfo{flex:1;min-width:0}.sn{font-size:13px;font-weight:700;line-height:1.3}
+.ss{font-size:11px;color:var(--tx2);margin-top:2px}
+.slbl{font-size:10px;font-weight:800;color:var(--tx3);letter-spacing:.06em;text-transform:uppercase;margin:16px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--br)}
+.arch-row{padding:12px 14px;background:var(--sf);border-radius:12px;margin-bottom:8px;border:1px solid var(--br)}
+.arch-hd{font-size:12px;font-weight:700;color:var(--tx2);margin-bottom:8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.arch-chip{display:inline-block;border-radius:5px;padding:2px 8px;font-size:11px;font-weight:700;margin:2px 2px}
+.req-card{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--sf);border-radius:12px;margin-bottom:8px;border:1px solid var(--br)}
+.req-msg{padding:10px 14px;border-radius:9px;font-size:13px;font-weight:700;margin-bottom:12px;border:1px solid}
+.req-msg.ok{background:rgba(16,185,129,.07);color:#059669;border-color:rgba(16,185,129,.22)}
+.req-msg.no{background:rgba(239,68,68,.06);color:var(--rd);border-color:rgba(239,68,68,.2)}
+.bc{display:flex;align-items:center;gap:6px;font-size:13px;margin-bottom:16px;flex-wrap:wrap;background:var(--sf);border-radius:10px;padding:10px 14px;border:1px solid var(--br)}
+.bci{color:var(--pr);font-weight:700;cursor:pointer}.bci:hover{text-decoration:underline}
+.bcs{color:var(--tx3)}.bcc{font-weight:700;color:var(--tx)}
+.dcg{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.dirc{display:flex;align-items:center;gap:12px;background:var(--sf);border-radius:12px;padding:12px 16px;box-shadow:var(--sh);cursor:pointer;transition:all .15s;border:1px solid var(--br)}
+.dirc:hover{border-color:var(--pr);box-shadow:0 4px 16px rgba(79,70,229,.12)}
+.dic{width:40px;height:40px;border-radius:10px;background:var(--pr-l);display:flex;align-items:center;justify-content:center;color:var(--pr);flex-shrink:0}
+.dic svg{width:20px;height:20px}
+.dn{font-size:14px;font-weight:700;color:var(--tx)}.ds{font-size:11px;color:var(--tx2);margin-top:2px}
+.tr{display:flex;align-items:center;gap:10px;background:var(--sf);border-radius:10px;padding:10px 12px;box-shadow:var(--sh);border:1px solid var(--br);margin-bottom:6px}
+.xb{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.18);border-radius:7px;color:var(--rd);cursor:pointer;font-size:12px;font-weight:700;padding:5px 10px;transition:all .15s;display:flex;align-items:center;gap:4px}
+.xb:hover{background:rgba(239,68,68,.14)}
+.xb svg{width:12px;height:12px}
+.set-sec{font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--tx2);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--br)}
+.chklbl{display:flex;align-items:center;gap:9px;cursor:pointer;font-size:13px;font-weight:600;margin-top:6px}
+.seg{display:flex;gap:8px;margin-top:10px}
+.sgo{flex:1;padding:10px;border:1.5px solid var(--br);border-radius:9px;background:var(--sf);color:var(--tx2);font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s}
+.sgo svg{width:16px;height:16px}
+.sgo.on{background:var(--pr);color:#fff;border-color:var(--pr)}
+.sgo:disabled{opacity:.35;cursor:default}
+.acc-name{font-size:15px;font-weight:800;color:var(--tx);margin-bottom:3px}
+.acc-role{font-size:12px;color:var(--tx2);margin-bottom:14px}
+.teacher-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--br)}
+.teacher-row:last-child{border-bottom:none}
+.dtbl{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
+.dtbl th{background:var(--s2);padding:8px 12px;text-align:left;font-size:10px;font-weight:800;color:var(--tx2);text-transform:uppercase;letter-spacing:.06em}
+.dtbl td{padding:8px 12px;border-bottom:1px solid var(--br)}
+.tn{color:var(--rd);font-weight:700}.te{color:#059669;font-weight:700}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.ov.open{opacity:1;pointer-events:all}
+.modal{background:var(--sf);border-radius:18px;padding:22px;width:90%;max-width:500px;max-height:82vh;overflow-y:auto;border:1px solid var(--br);box-shadow:0 20px 60px rgba(0,0,0,.18)}
+.mhd{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.mt{font-size:17px;font-weight:900;color:var(--tx)}
+.xbtn{background:var(--s2);border:none;border-radius:8px;cursor:pointer;padding:7px;color:var(--tx2);display:flex;align-items:center;justify-content:center}
+.xbtn svg{width:16px;height:16px}
+.modal-warn{border-radius:9px;padding:10px 13px;font-size:13px;font-weight:700;margin-bottom:14px;border:1px solid}
+.modal-warn.danger{background:rgba(239,68,68,.07);color:var(--rd);border-color:rgba(239,68,68,.2)}
+.modal-warn.warn{background:rgba(245,158,11,.07);color:#D97706;border-color:rgba(245,158,11,.2)}
+.mstats{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.mstat{flex:1;min-width:70px;border-radius:10px;padding:12px;text-align:center;border:1px solid var(--br)}
+.msv{font-size:22px;font-weight:900}.msl{font-size:10px;color:var(--tx2);margin-top:3px;text-transform:uppercase;font-weight:700;letter-spacing:.04em}
+.dlg{background:var(--sf);border-radius:18px;padding:24px;width:90%;max-width:360px;border:1px solid var(--br)}
+.dlt{font-size:17px;font-weight:900;margin-bottom:8px;color:var(--tx)}
+.dlm{font-size:13px;color:var(--tx2);margin-bottom:20px;line-height:1.6}
+.dlb{display:flex;gap:10px}
+.tfa{display:flex;flex-direction:column;align-items:center;gap:14px;padding:8px 0}
+.tfa .ti{width:56px;height:56px;border-radius:16px;background:var(--pr-l);display:flex;align-items:center;justify-content:center;color:var(--pr)}
+.tfa .ti svg{width:28px;height:28px}
+.tfa .tt{font-size:17px;font-weight:800;color:var(--tx)}
+.tfa .ts{font-size:13px;color:var(--tx2);text-align:center;line-height:1.6;max-width:280px}
+.cinps{display:flex;gap:8px;justify-content:center}
+.ci{width:44px;height:52px;border:1.5px solid var(--br);border-radius:10px;font-size:22px;font-weight:800;text-align:center;background:var(--sf);color:var(--tx)}
+.ci:focus{outline:none;border-color:var(--pr);box-shadow:0 0 0 3px var(--pr-l)}
+.empty-state{text-align:center;padding:36px 20px;color:var(--tx2)}
+.empty-state svg{width:44px;height:44px;margin:0 auto 12px;display:block;opacity:.4}
+.empty-state p{font-size:14px;font-weight:500}
+
+/* === Group switcher (Curator settings) === */
+.grp-sw-bar{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+.gsw{padding:7px 18px;border-radius:8px;border:1.5px solid var(--br);background:var(--sf);color:var(--tx);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;}
+.gsw.on{background:var(--pr);color:#fff;border-color:var(--pr);}
+.gsw:hover:not(.on){border-color:var(--pr);color:var(--pr);}
+.cur-grp-name{font-size:15px;font-weight:700;color:var(--pr);margin-top:8px;}
+
+/* === Demo code box (2FA screen) === */
+.demo-code-box{margin:12px 0;padding:10px 16px;background:rgba(245,158,11,.12);border:1.5px solid rgba(245,158,11,.4);border-radius:9px;font-size:13px;color:var(--tx);text-align:center;}
+.demo-code-box b{font-size:20px;letter-spacing:4px;color:#F59E0B;font-variant-numeric:tabular-nums;}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+
+
+/* Pro finish: calm hierarchy, responsive layouts, and accessible controls */
+button,select,input{font:inherit}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid color-mix(in srgb,var(--pr) 35%,transparent);outline-offset:2px}
+.btn:hover,.btn-ol:hover,.sgo:hover,.sw:hover{transform:translateY(-1px)}
+.card,.scard,.req-card,.tr,.dirc{transition:border-color .18s,box-shadow .18s,transform .18s}
+.jrow{min-height:64px}
+@media(max-width:760px){
+  #app{padding-top:52px}.d-out{height:auto;min-height:calc(100vh - 52px);display:block}.drail{width:100%;height:auto;border-right:0;border-bottom:1px solid var(--br)}
+  .drail-logo{padding:12px 16px}.drail-nav{display:flex;overflow-x:auto;padding:6px 8px;gap:4px}.drail-foot{display:none}.ri{width:auto;white-space:nowrap;border-left:0;border-bottom:3px solid transparent;padding:10px 12px}.ri.on{border-left:0;border-bottom-color:var(--pr)}
+  .dmain{padding:18px 14px;overflow:visible}.dmain-inner{max-width:none}.phd{font-size:18px;margin-bottom:14px}
+  .a-outer{padding:0}.a-phone{width:100%;height:calc(100vh - 52px);border-radius:0;box-shadow:none}.pbody{padding:10px}
+  .chips{gap:3px}.chip{padding:6px 7px;font-size:10px}.jrow{align-items:flex-start;flex-wrap:wrap}.jinfo{min-width:120px}.jrow .chips{margin-left:auto}.jrow .hm-btn{order:2}.jrow .chips{order:3;width:100%;justify-content:flex-end}.conf-row{font-size:11px}
+  .stats-grid{gap:6px}.stat-tile{padding:10px 6px}.stat-v{font-size:20px}.login-card{padding:28px 20px;border-radius:16px}.topbar{padding:0 10px}.tbar-title{font-size:12px}.sw{padding:6px 7px;font-size:10px}.sw svg{display:none}
+}
+@media(max-width:360px){.tbar-title{display:none}.topbar{gap:4px;padding:0 8px}.tbar-acts{gap:3px}.sw{padding:6px 7px}}
+@media(max-width:390px){.ph-t{font-size:14px}.pntab{font-size:8px}.pntab svg{width:20px;height:20px}.inp{font-size:13px}.dtbl th,.dtbl td{padding:7px 8px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+/* Premium interaction layer */
+.toast{position:fixed;right:24px;bottom:24px;z-index:1200;background:var(--tx);color:var(--sf);padding:12px 16px;border-radius:10px;box-shadow:0 8px 28px rgba(0,0,0,.22);font-size:13px;font-weight:700;animation:toastIn .22s ease-out}
+@keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.session-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:0 0 10px}.session-controls .inp{flex:1;min-width:130px}
+@media(max-width:520px){.session-controls .inp[type=date]{width:100%!important;flex-basis:100%}.toast{left:14px;right:14px;bottom:14px;text-align:center}}
+</style>
 </head>
 <body>
-<div class="card">
-  <div class="icon">📋</div>
-  <h1>Журнал посещаемости</h1>
-  <p class="subtitle">Отметка присутствия, цепочка подтверждений, статистика</p>
-
-  <div class="tab-row">
-    <button class="tab" onclick="showPlatform('android')">📱 Android</button>
-    <button class="tab" onclick="showPlatform('windows')">🖥 Windows</button>
-    <button class="tab" onclick="showPlatform('linux')">🐧 Linux / macOS</button>
-  </div>
-
-  <!-- ANDROID -->
-  <div id="android-section" style="display:none">
-    <a id="apk-btn" class="btn btn-android" href="https://github.com/sadfsadfs345345/attendance-journal/releases/latest/download/app-debug.apk">
-      <span>📲</span> Скачать APK для Android
-    </a>
-    <div class="steps">
-      <div class="steps-title">📖 Как установить:</div>
-      <div class="step"><div class="step-num">1</div><span>Нажмите кнопку — APK скачается автоматически</span></div>
-      <div class="step"><div class="step-num">2</div><span>Откройте файл из папки «Загрузки»</span></div>
-      <div class="step"><div class="step-num">3</div><span>Если появится предупреждение — нажмите «Разрешить» → «Установить»</span></div>
-      <div class="step"><div class="step-num">4</div><span>Иконка появится на рабочем столе ✨</span></div>
-    </div>
-    <div class="warning">⚠️ Андроид может спросить разрешение для установки из неизвестных источников — это безопасно.</div>
-  </div>
-
-  <!-- WINDOWS -->
-  <div id="windows-section" style="display:none">
-    <a id="exe-btn" class="btn btn-windows" href="https://github.com/sadfsadfs345345/attendance-journal/releases">
-      <span>📥</span> <span id="exe-btn-text">Загрузка...</span>
-    </a>
-    <div id="exe-status" class="status-msg">⏳ Поиск файла...</div>
-    <div class="steps">
-      <div class="steps-title">📖 Как установить:</div>
-      <div class="step"><div class="step-num">1</div><span>Скачайте <b>AttendanceJournal-Setup.exe</b></span></div>
-      <div class="step"><div class="step-num">2</div><span>Запустите файл — установщик сам всё сделает ✨</span></div>
-      <div class="step"><div class="step-num">3</div><span>Ярлык «Журнал посещаемости» появится на рабочем столе</span></div>
-    </div>
-    <div class="warning">⚠️ Windows SmartScreen может предупредить об неизвестном издателе. Нажмите «Подробнее» → «Всё равно запустить» — это безопасно.</div>
-  </div>
-
-  <!-- LINUX / MACOS -->
-  <div id="linux-section" style="display:none">
-    <a id="jar-btn" class="btn btn-linux" href="https://github.com/sadfsadfs345345/attendance-journal/releases" target="_blank">
-      📦 Скачать JAR (последняя версия)
-    </a>
-    <div class="steps">
-      <div class="steps-title">📖 Запуск через терминал:</div>
-      <div class="step"><div class="step-num">1</div><span>Java 17+: <code>sudo apt install openjdk-17-jdk</code></span></div>
-      <div class="step"><div class="step-num">2</div><span>Скачайте JAR и запустите: <code>java -jar attendance-journal.jar</code></span></div>
-    </div>
-  </div>
-
-  <div class="version-info">
-    Версия: <span id="latest-version">загрузка...</span> &bull;
-    <a href="https://github.com/sadfsadfs345345/attendance-journal" target="_blank" style="color:#1976D2">Исходный код</a>
-  </div>
-</div>
-
+<div id="topbar-mount"></div>
+<div id="app"></div>
+<div class="ov" id="ov"><div id="mc"></div></div>
 <script>
-  var REPO = 'sadfsadfs345345/attendance-journal';
+// Topbar render (mode switcher + dark toggle)
+(function(){
+  var tb = document.getElementById("topbar-mount");
+  tb.innerHTML = '<div class="topbar">'
+    + '<div class="tbar-brand">'
+    + '<div class="tbar-logo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></div>'
+    + '<span class="tbar-title">Журнал посещаемости</span>'
+    + '</div>'
+    + '<div class="tbar-acts">'
+    + '<button class="sw" id="sw-mob" data-a="mode" data-v="android"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="18" r="1"/></svg>Android</button>'
+    + '<button class="sw" id="sw-dsk" data-a="mode" data-v="desktop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Desktop</button>'
+    + '<a class="sw" href="install.html" title="Скачать приложения" style="text-decoration:none">↗ Скачать</a>'
+    + '<button class="sw" id="sw-dark" data-a="dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>Тема</button>'
+    + '</div></div>';
+})();
+</script>
+<script>
+var SUBS=['Математика','Физика','Информатика','История','Химия','Программирование','БЖ'];
+function makeRecs(u,e){
+  var r=[],d=1;
+  for(var i=0;i<u+e;i++){r.push({date:String(d+1).padStart(2,'0')+'.09.26',subject:SUBS[i%SUBS.length],type:i<u?'unexcused':'excused'});d+=2;}
+  return r;
+}
+var WLIST_DIR=[
+  {email:'smirnova@edu.ru',name:'Смирнова Елена',role:'CURATOR'},
+  {email:'borisov@edu.ru',name:'Борисов Николай',role:'CURATOR'},
+  {email:'petrov@edu.ru',name:'Петров Алексей',role:'TEACHER'},
+  {email:'kozlov@edu.ru',name:'Козлов Дмитрий',role:'TEACHER'},
+  {email:'fomin@edu.ru',name:'Фомин Сергей',role:'TEACHER'},
+  {email:'lebedeva@edu.ru',name:'Лебедева Ирина',role:'TEACHER'}
+];
+var WLIST_CUR={
+  'smirnova@edu.ru':[
+    {email:'kozlova@edu.ru',name:'Козлова Мария'},
+    {email:'ivanov@edu.ru',name:'Иванов Иван'},
+    {email:'morozov@edu.ru',name:'Морозов Дмитрий'},
+    {email:'novikov@edu.ru',name:'Новиков Алексей'},
+    {email:'petrova@edu.ru',name:'Петрова Анна'},
+    {email:'sidorov@edu.ru',name:'Сидоров Пётр'},
+    {email:'fedorova@edu.ru',name:'Фёдорова Елена'},
+    {email:'volkova@edu.ru',name:'Волкова Ольга'}
+  ],
+  'borisov@edu.ru':[]
+};
+var ST=[
+  {name:'Козлова Мария',unex:31,exc:2,hm:false},
+  {name:'Иванов Иван',unex:26,exc:1,hm:false},
+  {name:'Морозов Дмитрий',unex:15,exc:3,hm:false},
+  {name:'Новиков Алексей',unex:8,exc:2,hm:false},
+  {name:'Петрова Анна',unex:3,exc:5,hm:false},
+  {name:'Сидоров Пётр',unex:1,exc:0,hm:false},
+  {name:'Фёдорова Елена',unex:0,exc:1,hm:false},
+  {name:'Волкова Ольга',unex:2,exc:4,hm:true}
+];
+var PENDING_REQS=[
+  {role:'STUDENT',rl:'Студент',name:'Зайцев Кирилл',email:'zaitsev@edu.ru',grp:'ИС-21'},
+  {role:'STUDENT',rl:'Студент',name:'Орлова Наталья',email:'orlova@edu.ru',grp:'ИС-21'},
+  {role:'TEACHER',rl:'Учитель',name:'Громов Павел',email:'gromov@edu.ru',grp:''},
+  {role:'CURATOR',rl:'Куратор',name:'Фёдоров Игорь',email:'fedorov@edu.ru',grp:''}
+];
+ST.forEach(function(s){s.recs=makeRecs(s.unex,s.exc);});
+var CUR=[
+  {name:'Смирнова Елена',email:'smirnova@edu.ru',groups:['ИС-21','ИС-22']},
+  {name:'Борисов Николай',email:'borisov@edu.ru',groups:['ИС-23']}
+];
+var TEACHERS=[
+  {name:'Петров Алексей',email:'petrov@edu.ru'},
+  {name:'Козлов Дмитрий',email:'kozlov@edu.ru'},
+  {name:'Фомин Сергей',email:'fomin@edu.ru'},
+  {name:'Лебедева Ирина',email:'lebedeva@edu.ru'}
+];
+var GRP={
+  'ИС-21':{teachers:['Петров Алексей','Козлов Дмитрий'],students:ST},
+  'ИС-22':{teachers:['Фомин Сергей'],students:[]},
+  'ИС-23':{teachers:['Лебедева Ирина'],students:[]}
+};
+var ROLES=[
+  {k:'STUDENT',l:'Студент'},{k:'HEADMAN',l:'Староста'},
+  {k:'TEACHER',l:'Учитель'},{k:'CURATOR',l:'Куратор'},
+  {k:'DIRECTOR',l:'Директор'}
+];
+var ATT=[
+  {k:'P',l:'Прис.',cl:'cp',color:'#10B981'},
+  {k:'U',l:'Уваж.',cl:'cu',color:'#F59E0B'},
+  {k:'N',l:'Неув.',cl:'cn',color:'#EF4444'}
+];
+var S={
+  mode:'android',view:'login',role:'HEADMAN',rl:'Староста',
+  user:'Волкова Ольга',step:'login',tab:0,dt:'journal',
+  tm:'light',dark:false,dp:[],att:{},sp:false,sp2:false,pe:false,lr:'STUDENT',grp:'ИС-21',flow:'login',
+  reqMsg:'',reqOk:false,re:false,pendingReg:null,newGrpName:'',assignGrp:'',assignCur:'',dirMsg:'',dirMsgOk:false,
+  attHM:{},attTR:{},attFin:{},archive:[],sessionClosed:false,currentSubject:SUBS[0],sessionDate:new Date().toISOString().slice(0,10),archSubjFilter:'',
+  storeExpelled:[],retainMo:3,archiveMo:6,confResolved:{},
+  expelTarget:null,expelMo:3,attHMSet:{},closeConfirm:false
+};
+ST.forEach(function(_,i){S.att[i]='P';S.attHM[i]='P';S.attFin[i]='P';S.attTR[i]='P';});
 
-  function detectPlatform() {
-    var ua = navigator.userAgent.toLowerCase();
-    if (/android/.test(ua)) return 'android';
-    if (/win/.test(ua)) return 'windows';
-    return 'linux';
+/* Prototype persistence: keeps demo data between refreshes without persisting credentials. */
+var STORAGE_KEY='attendance-journal-premium-v6';
+function saveDemoState(){
+  try{
+    var groupState={};Object.keys(GRP).forEach(function(g){groupState[g]={teachers:(GRP[g].teachers||[]).slice(),studentNames:(GRP[g].students||[]).map(function(x){return x.name;})};});
+    localStorage.setItem(STORAGE_KEY,JSON.stringify({
+      students:ST.map(function(x){return {name:x.name,unex:x.unex,exc:x.exc,hm:!!x.hm,_expelled:!!x._expelled,recs:x.recs||[]};}),
+      pending:PENDING_REQS,curators:CUR,teachers:TEACHERS,groups:groupState,
+      ui:{mode:S.mode,tm:S.tm,grp:S.grp,currentSubject:S.currentSubject,sessionDate:S.sessionDate,archSubjFilter:S.archSubjFilter,archive:S.archive,storeExpelled:S.storeExpelled,retainMo:S.retainMo,archiveMo:S.archiveMo,attHM:S.attHM,attTR:S.attTR,attFin:S.attFin,att:S.att,attHMSet:S.attHMSet,confResolved:S.confResolved}
+    }));
+  }catch(err){/* localStorage may be unavailable for file:// previews */}
+}
+function restoreDemoState(){
+  try{
+    var raw=localStorage.getItem(STORAGE_KEY);if(!raw)return;var d=JSON.parse(raw);
+    if(Array.isArray(d.students))d.students.forEach(function(saved){var target=ST.filter(function(x){return x.name===saved.name;})[0];if(target)Object.assign(target,saved);});
+    if(Array.isArray(d.pending)){PENDING_REQS.length=0;d.pending.forEach(function(x){PENDING_REQS.push(x);});}
+    if(Array.isArray(d.curators)){CUR.length=0;d.curators.forEach(function(x){CUR.push(x);});}
+    if(Array.isArray(d.teachers)){TEACHERS.length=0;d.teachers.forEach(function(x){TEACHERS.push(x);});}
+    if(d.groups)Object.keys(d.groups).forEach(function(g){if(!GRP[g])GRP[g]={teachers:[],students:[]};GRP[g].teachers=(d.groups[g].teachers||[]).slice();GRP[g].students=(d.groups[g].studentNames||[]).map(function(n){return ST.filter(function(x){return x.name===n;})[0];}).filter(Boolean);});
+    var u=d.ui||{};Object.keys(u).forEach(function(k){if(k in S)S[k]=u[k];});
+  }catch(err){/* ignore corrupted demo state and use safe defaults */}
+}
+restoreDemoState();
+S.attTR[0]='N';S.attTR[3]='U';
+
+function groupStudents(group){
+  var g=GRP[group];return g&&Array.isArray(g.students)?g.students.filter(Boolean):[];
+}
+function visibleStudents(){
+  var list=groupStudents(S.grp).filter(function(x){return !x._expelled&&!x._purged;});
+  return S.role==='STUDENT'?list.filter(function(x){return x.name===S.user;}):list;
+}
+function sessionKey(){return [S.grp,S.sessionDate,S.currentSubject].join('|');}
+function resetSessionForContext(){
+  S.sessionClosed=S.archive.some(function(x){return x.key===sessionKey()||(!x.key&&x.group===S.grp&&x.date===S.sessionDate&&x.subject===S.currentSubject);});
+  S.attHM={};S.attTR={};S.attFin={};S.att={};S.attHMSet={};S.confResolved={};
+  ST.forEach(function(_,i){S.att[i]='P';S.attHM[i]='P';S.attFin[i]='P';S.attTR[i]='P';});
+  if(!S.sessionClosed&&S.role==='TEACHER'){var first=ST.filter(function(x){return x.name==='Козлова Мария';})[0];if(first)S.attTR[ST.indexOf(first)]='N';}
+}
+function purgeExpiredData(){
+  var now=new Date().toISOString().slice(0,10),cut=new Date();cut.setMonth(cut.getMonth()-Math.max(1,Number(S.archiveMo)||6));var cutStr=cut.toISOString().slice(0,10);
+  S.archive=S.archive.filter(function(x){return !x.date||x.date>=cutStr;});
+  S.storeExpelled=S.storeExpelled.filter(function(ex){
+    if(!ex.until||ex.until>now)return true;
+    if(ex.data){ex.data._expelled=true;ex.data._purged=true;Object.keys(GRP).forEach(function(g){GRP[g].students=(GRP[g].students||[]).filter(function(st){return st!==ex.data;});});}
+    return false;
+  });
+}
+function sortST(arr){
+  return arr.slice().sort(function(a,b){
+    var pa=a.unex>=30?0:a.unex>=25?1:2,pb=b.unex>=30?0:b.unex>=25?1:2;
+    return pa-pb||a.name.localeCompare(b.name,'ru');
+  });
+}
+function today(){return new Date().toLocaleDateString('ru-RU',{day:'2-digit',month:'long',year:'numeric'});}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+var ICONS={
+  journal:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M4 19.5A2.5 2.5 0 016.5 17H20'/><path d='M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z'/></svg>",
+  stats:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><line x1='18' y1='20' x2='18' y2='10'/><line x1='12' y1='20' x2='12' y2='4'/><line x1='6' y1='20' x2='6' y2='14'/></svg>",
+  requests:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><polyline points='22 12 16 12 14 15 10 15 8 12 2 12'/><path d='M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z'/></svg>",
+  archive:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><polyline points='21 8 21 21 3 21 3 8'/><rect x='1' y='3' width='22' height='5' rx='1'/><line x1='10' y1='12' x2='14' y2='12'/></svg>",
+  settings:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='3'/><path d='M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z'/></svg>",
+  director:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z'/><polyline points='9,22 9,12 15,12 15,22'/></svg>",
+  data:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><ellipse cx='12' cy='5' rx='9' ry='3'/><path d='M21 12c0 1.66-4 3-9 3s-9-1.34-9-3'/><path d='M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5'/></svg>",
+  manage:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2'/><circle cx='9' cy='7' r='4'/><line x1='23' y1='11' x2='17' y2='11'/><line x1='20' y1='8' x2='20' y2='14'/></svg>",
+  logout:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4'/><polyline points='16,17 21,12 16,7'/><line x1='21' y1='12' x2='9' y2='12'/></svg>",
+  book:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M4 19.5A2.5 2.5 0 016.5 17H20'/><path d='M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z'/></svg>",
+  eye:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z'/><circle cx='12' cy='12' r='3'/></svg>",
+  eyeoff:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24'/><line x1='1' y1='1' x2='23' y2='23'/></svg>",
+  check:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><polyline points='20,6 9,17 4,12'/></svg>",
+  x:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><line x1='18' y1='6' x2='6' y2='18'/><line x1='6' y1='6' x2='18' y2='18'/></svg>",
+  mail:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z'/><polyline points='22,6 12,13 2,6'/></svg>",
+  lock:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='11' width='18' height='11' rx='2' ry='2'/><path d='M7 11V7a5 5 0 0110 0v4'/></svg>",
+  warning:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z'/><line x1='12' y1='9' x2='12' y2='13'/><line x1='12' y1='17' x2='12.01' y2='17'/></svg>",
+  sun:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='5'/><line x1='12' y1='1' x2='12' y2='3'/><line x1='12' y1='21' x2='12' y2='23'/><line x1='4.22' y1='4.22' x2='5.64' y2='5.64'/><line x1='18.36' y1='18.36' x2='19.78' y2='19.78'/><line x1='1' y1='12' x2='3' y2='12'/><line x1='21' y1='12' x2='23' y2='12'/><line x1='4.22' y1='19.78' x2='5.64' y2='18.36'/><line x1='18.36' y1='5.64' x2='19.78' y2='4.22'/></svg>",
+  moon:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z'/></svg>",
+  users:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2'/><circle cx='9' cy='7' r='4'/><path d='M23 21v-2a4 4 0 00-3-3.87'/><path d='M16 3.13a4 4 0 010 7.75'/></svg>",
+  grad:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M22 10v6M2 10l10-5 10 5-10 5z'/><path d='M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5'/></svg>",
+  clock:"<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='10'/><polyline points='12,6 12,12 16,14'/></svg>"
+};
+
+function ico(name,sz){
+  sz=sz||'100%';
+  var s=ICONS[name]||ICONS['x'];
+  return s.replace('<svg ','<svg width="'+sz+'" height="'+sz+'" style="display:inline-block;vertical-align:middle" ');
+}
+
+// RING: fix — arc starts at 12 o'clock via stroke-dashoffset, text stays upright
+function ring(pct,color,sz,sw){
+  sz=sz||80;sw=sw||8;
+  var r=(sz-sw*2)/2,cx=sz/2,cy=sz/2,c=2*Math.PI*r,d=c*pct;
+  var offset=(c*0.25).toFixed(1);
+  return '<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 '+sz+' '+sz+'" style="display:block;margin:0 auto">'
+    +'<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="var(--br)" stroke-width="'+sw+'"/>'
+    +'<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+color+'" stroke-width="'+sw+'"'
+    +' stroke-linecap="round" stroke-dasharray="'+d.toFixed(1)+' '+c.toFixed(1)+'"'
+    +' stroke-dashoffset="'+offset+'"/>'
+    +'<text x="'+cx+'" y="'+cy+'" text-anchor="middle" dominant-baseline="middle"'
+    +' font-weight="700" font-size="'+(sz>70?15:12)+'" fill="'+color+'">'+Math.round(pct*100)+'%</text>'
+    +'</svg>';
+}
+
+function roleTabs(){
+  if(S.role==='DIRECTOR'){
+    var dc=PENDING_REQS.filter(function(r){return r.role==='TEACHER'||r.role==='CURATOR';}).length;
+    return [{k:'director',ic:'director',l:'Управл.'},{k:'requests',ic:'requests',l:'Заявки',badge:dc},{k:'archive',ic:'archive',l:'Архив'},{k:'data',ic:'data',l:'Данные'},{k:'settings',ic:'settings',l:'Настр.'}];
   }
+  if(S.role==='STUDENT') return [{k:'stats',ic:'stats',l:'Статист.'},{k:'settings',ic:'settings',l:'Настр.'}];
+  var cc=PENDING_REQS.filter(function(r){return r.role==='STUDENT';}).length;
+  if(S.role==='CURATOR') return [{k:'journal',ic:'journal',l:'Журнал'},{k:'stats',ic:'stats',l:'Стат.'},{k:'requests',ic:'requests',l:'Заявки',badge:cc},{k:'manage',ic:'manage',l:'Состав'},{k:'archive',ic:'archive',l:'Архив'},{k:'settings',ic:'settings',l:'Настр.'}];
+  if(S.role==='HEADMAN') return [{k:'journal',ic:'journal',l:'Журнал'},{k:'stats',ic:'stats',l:'Стат.'},{k:'settings',ic:'settings',l:'Настр.'}];
+  return [{k:'journal',ic:'journal',l:'Журнал'},{k:'stats',ic:'stats',l:'Стат.'},{k:'settings',ic:'settings',l:'Настр.'}];
+}
 
-  function showPlatform(name) {
-    ['android','windows','linux'].forEach(function(p) {
-      var el = document.getElementById(p + '-section');
-      if (el) el.style.display = (p === name) ? 'block' : 'none';
+function rExpelModal(){
+  if(!S.expelTarget)return '';
+  var opt='';for(var m=1;m<=12;m++)opt+='<option value="'+m+'"'+(S.expelMo===m?' selected':'')+'>'+m+' мес.</option>';
+  return '<div style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:999;display:flex;align-items:center;justify-content:center">'
+    +'<div class="dlg" style="display:flex;flex-direction:column;gap:14px">'
+    +'<div class="dlt">Отчислить студента</div>'
+    +'<div style="font-size:14px;font-weight:600">'+esc(S.expelTarget.name)+'</div>'
+    +'<div class="fld"><label>Срок хранения данных</label>'
+    +'<select class="inp" data-a="expelMoSel">'+opt+'</select></div>'
+    +'<div class="dlb"><button class="btn btn-danger" style="flex:1" data-a="expelConfirm">Подтвердить</button>'
+    +'<button class="btn-ol" style="flex:1" data-a="expelCancel">Отмена</button></div></div></div>';
+}
+
+function rCloseConfirmModal(){
+  if(!S.closeConfirm)return '';
+  return '<div style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:999;display:flex;align-items:center;justify-content:center">'
+    +'<div class="dlg" style="display:flex;flex-direction:column;gap:14px">'
+    +'<div class="dlt">Закрыть занятие?</div>'
+    +'<div class="dlm" style="margin-bottom:0">Действие необратимо. Дата: <b>'+today()+'</b></div>'
+    +'<div class="dlb"><button class="btn btn-pr" style="flex:1" data-a="closeSessionConfirm">Да, закрыть</button>'
+    +'<button class="btn-ol" style="flex:1" data-a="closeSessionCancel">Отмена</button></div></div></div>';
+}
+
+function render(){
+  purgeExpiredData();
+  saveDemoState();
+  var app=document.getElementById('app');
+  if(!app)return;
+  if(S.view!=='main'){app.innerHTML=rLogin();return;}
+  app.innerHTML=(S.mode==='android'?rAndroid():rDesktop())+rExpelModal()+rCloseConfirmModal();
+  var mb=document.getElementById('sw-mob'),db=document.getElementById('sw-dsk');
+  if(mb)mb.classList.toggle('on',S.mode==='android');
+  if(db)db.classList.toggle('on',S.mode==='desktop');
+}
+
+function rAndroid(){
+  var tabs=roleTabs(),nav='';
+  tabs.forEach(function(t,i){
+    var badge=(t.badge>0)?'<span class="nbadge">'+t.badge+'</span>':'';
+    nav+='<button class="pntab'+(S.tab===i?' on':'')+'" data-a="tab" data-v="'+i+'">'
+      +ico(t.ic,'22')+badge+'<span>'+t.l+'</span></button>';
+  });
+  return '<div class="a-outer"><div class="a-phone">'
+    +'<div class="ph"><div class="ph-top">'
+    +'<div><div class="ph-t">Журнал посещаемости</div>'
+    +'<div class="ph-s">'+esc(S.rl)+' · '+esc(S.user.split(' ').slice(0,2).join(' '))+'</div></div>'
+    +'<button class="ph-x" data-a="logout" title="Выйти">'+ico('logout','18')+'</button></div></div>'
+    +'<div class="pbody">'+rTab(tabs[S.tab].k,false)+'</div>'
+    +'<nav class="pnav">'+nav+'</nav></div></div>';
+}
+
+function rDesktop(){
+  var tabs=roleTabs(),nav='';
+  tabs.forEach(function(t){
+    var badge=(t.badge>0)?'<span class="ri-badge">'+t.badge+'</span>':'';
+    nav+='<button class="ri'+(S.dt===t.k?' on':'')+'" data-a="dtab" data-v="'+t.k+'">'
+      +ico(t.ic,'18')+'<span>'+t.l+'</span>'+badge+'</button>';
+  });
+  return '<div class="d-out">'
+    +'<nav class="drail"><div class="drail-logo"><div class="drail-logo-top">'
+    +'<div class="drail-logo-icon">'+ico('book','20')+'</div>'
+    +'<div><div class="drail-logo-name">Журнал</div>'
+    +'<div class="drail-logo-role">'+esc(S.user.split(' ')[0])+'</div></div></div></div>'
+    +'<div class="drail-nav">'+nav+'</div>'
+    +'<div class="drail-foot"><button class="ri" data-a="logout">'+ico('logout','18')+'<span>Выйти</span></button></div>'
+    +'</nav><main class="dmain"><div class="dmain-inner">'+rTab(S.dt,true)+'</div></main></div>';
+}
+
+function rTab(k,desk){
+  if(k==='data')     return rData(desk);
+  if(k==='director') return rDir(desk);
+  if(k==='journal')  return rJournal(desk);
+  if(k==='stats')    return rStats(desk);
+  if(k==='requests') return rRequests(desk);
+  if(k==='archive')  return rArchive(desk);
+  if(k==='settings') return rSettings(desk);
+  if(k==='manage')   return rManage(desk);
+  return '';
+}
+
+function rLogin(){
+  var body='';
+  if(S.step==='login')         body=rLoginForm();
+  else if(S.step==='register') body=rRegisterForm();
+  else if(S.step==='sent')     body=rSent();
+  else if(S.step==='code')     body=rCode();
+  else if(S.step==='awaiting') body=rAwait();
+  else                         body=rLoginForm();
+  return '<div class="login-shell"><div class="login-card">'
+    +'<div class="llogo"><div class="llogo-icon">'+ico('book','28')+'</div>'
+    +'<h1>Журнал посещаемости</h1><p>Система учёта посещаемости студентов</p></div>'
+    +body+'</div></div>';
+}
+
+function rLoginForm(){
+  var p1t=S.sp?'text':'password',lpills='';
+  ROLES.forEach(function(r){lpills+='<button class="rpill'+(S.lr===r.k?' on':'')+'" data-a="role" data-v="'+r.k+'">'+r.l+'</button>';});
+  return '<div class="lform">'
+    +'<div class="fld"><div class="demo-badge">'+ico('warning','14')+' ДЕМО-РЕЖИМ</div>'
+    +'<label>Роль для демо-входа</label><div class="rpills">'+lpills+'</div></div>'
+    +'<div class="fld"><label>Email</label><div class="iw"><div class="iw-icon">'+ico('mail','16')+'</div>'
+    +'<input class="inp" type="email" placeholder="you@edu.ru" id="lemail"></div></div>'
+    +'<div class="fld"><label>Пароль</label><div class="iw"><div class="iw-icon">'+ico('lock','16')+'</div>'
+    +'<input class="inp" type="'+p1t+'" id="lpwd" placeholder="Пароль" data-pwd="1">'
+    +'<button class="eye" aria-label="Показать или скрыть пароль" data-a="eye" data-v="1">'+(S.sp?ico('eyeoff','17'):ico('eye','17'))+'</button></div></div>'
+    +'<button class="btn btn-pr" data-a="login">Войти в систему</button>'
+    +'<div class="auth-link">Нет аккаунта? <span class="lnk" data-a="step" data-v="register">Зарегистрироваться →</span></div></div>';
+}
+
+function rRegisterForm(){
+  var pills='';
+  ROLES.forEach(function(r){
+    if(r.k==='HEADMAN')return;
+    pills+='<button class="rpill'+(S.lr===r.k?' on':'')+'" data-a="role" data-v="'+r.k+'">'+r.l+'</button>';
+  });
+  var p1t=S.sp?'text':'password',p2t=S.sp2?'text':'password',ec=S.pe?' err':'';
+  return '<div class="lform">'
+    +(S.re?'<div class="req-msg no">'+ico('x','14')+' Ваш email или ФИО не найдены в списке допущенных. Обратитесь к куратору или директору.</div>':'')
+    +'<div class="fld"><label>Роль</label><div class="rpills">'+pills+'</div></div>'
+    +'<div class="fld"><label>ФИО (Фамилия Имя)</label>'
+    +'<input class="inp" type="text" placeholder="Фамилия Имя" id="lfio"></div>'
+    +'<div class="fld"><label>Email</label><div class="iw"><div class="iw-icon">'+ico('mail','16')+'</div>'
+    +'<input class="inp" type="email" placeholder="you@edu.ru" id="lemail"></div></div>'
+    +'<div class="fld"><label>Пароль</label><div class="iw"><div class="iw-icon">'+ico('lock','16')+'</div>'
+    +'<input class="inp" type="'+p1t+'" id="lpwd" placeholder="Пароль" data-pwd="1">'
+    +'<button class="eye" aria-label="Показать или скрыть пароль" data-a="eye" data-v="1">'+(S.sp?ico('eyeoff','17'):ico('eye','17'))+'</button></div></div>'
+    +'<div class="fld"><label>Повторите пароль</label><div class="iw"><div class="iw-icon">'+ico('lock','16')+'</div>'
+    +'<input class="inp'+ec+'" type="'+p2t+'" id="lpwd2" placeholder="Повторите" data-pwd="2">'
+    +'<button class="eye" aria-label="Показать или скрыть пароль" data-a="eye" data-v="2">'+(S.sp2?ico('eyeoff','17'):ico('eye','17'))+'</button></div>'
+    +'<div class="errmsg" id="perrmsg">'+(S.pe?'Пароли не совпадают':'')+'</div></div>'
+    +'<button class="btn btn-pr" data-a="register">Зарегистрироваться</button>'
+    +'<div class="auth-link"><span class="lnk" data-a="step" data-v="login">← Уже есть аккаунт? Войти</span></div></div>';
+}
+
+function rSent(){
+  return '<div class="tfa"><div class="ti">'+ico('mail','28')+'</div><div class="tt">Письмо отправлено</div>'
+    +'<div class="ts">На вашу почту отправлен 6-значный код подтверждения.</div>'
+    +'<div class="demo-code-box">⚠ Демо-код: <b>'+S.loginCode+'</b></div>'
+    +'<button class="btn btn-pr" data-a="step" data-v="code">Ввести код →</button>'
+    +'<button class="btn-ol" data-a="step" data-v="form">← Назад</button></div>';
+}
+
+function rCode(){
+  var boxes='';
+  for(var i=0;i<6;i++) boxes+='<input class="ci" maxlength="1" id="ci'+i+'" data-ci="'+i+'" type="text" inputmode="numeric">';
+  return '<div class="tfa"><div class="ti">'+ico('lock','28')+'</div><div class="tt">Введите код</div>'
+    +'<div class="cinps">'+boxes+'</div>'
+    +'<button class="btn btn-pr" data-a="verify">Подтвердить →</button>'
+    +'<button class="btn-ol" data-a="step" data-v="form">'
+      +ico('x','14')+' Изменить email / Назад</button></div>';
+}
+
+function rAwait(){
+  var who=(['STUDENT','HEADMAN'].indexOf(S.lr)>=0)?'куратору':'директору';
+  return '<div class="tfa"><div class="ti">'+ico('clock','28')+'</div><div class="tt">Ожидание одобрения</div>'
+    +'<div class="ts">Email подтверждён. Запрос отправлен '+who+'.</div>'
+    +'<div style="padding:10px 14px;background:var(--pr-l);border-radius:9px;font-size:13px;color:var(--pr);font-weight:700">ℹ Для демо — войдите сразу</div>'
+    +'<button class="btn btn-pr" data-a="approve">Войти в систему</button></div>';
+}
+
+function rArchive(desk){
+  var h='';
+  if(desk) h+='<div class="phd">Архив занятий</div>';
+  if(!S.archive.length) return h+'<div class="empty-state">'+ico('archive','44')+'<p>Архив пуст — здесь будут закрытые занятия</p></div>';
+  // subject filter
+  var allSubjs=[''];S.archive.forEach(function(r){if(r.subject&&allSubjs.indexOf(r.subject)<0)allSubjs.push(r.subject);});
+  var fOpts='<option value="">Все предметы</option>';allSubjs.slice(1).forEach(function(sb){fOpts+='<option value="'+sb+'"'+(S.archSubjFilter===sb?' selected':'')+'>'+sb+'</option>';});
+  h+='<div style="display:flex;align-items:center;gap:8px;padding:0 0 10px">'    +'<span style="font-size:12px;color:var(--tx2)">Предмет:</span>'    +'<select class="inp" style="margin:0;flex:1" data-a="archiveFilter">'+fOpts+'</select></div>';
+  h+='<div class="slist">';
+  var filteredArch=S.archive.slice().reverse().filter(function(r){return !S.archSubjFilter||r.subject===S.archSubjFilter;});
+  if(!filteredArch.length) h+='<div style="font-size:13px;color:var(--tx2);text-align:center;padding:24px">Нет записей по этому предмету</div>';
+  filteredArch.forEach(function(rec){
+    h+='<div class="arch-row"><div class="arch-hd">'
+      +'<span style="font-weight:700;color:var(--tx)">'+rec.date+'</span>'
+      +'<span style="color:var(--br)">·</span><span>'+esc(rec.group)+'</span>'
+      +(rec.subject?'<span style="color:var(--br)">·</span><span style="color:var(--pr);font-weight:600">'+esc(rec.subject)+'</span>':'')
+      +(rec.curator?'<span style="color:var(--br)">·</span><span>К: '+esc(rec.curator)+'</span>':'')+'</div><div>';
+    var archiveStudents=(rec.studentNames||[]).map(function(n){return ST.filter(function(x){return x.name===n;})[0];}).filter(Boolean);
+    if(!archiveStudents.length)archiveStudents=groupStudents(rec.group);
+    sortST(archiveStudents).forEach(function(s){
+      var idx=ST.indexOf(s),v=rec.att[idx]||'P',att=ATT[0];
+      ATT.forEach(function(a){if(a.k===v)att=a;});
+      h+='<span class="arch-chip" style="background:'+att.color+'18;color:'+att.color+'">'+s.name.split(' ')[0]+': '+att.l+'</span>';
     });
-    document.querySelectorAll('.tab').forEach(function(t, i) {
-      t.classList.toggle('active', ['android','windows','linux'][i] === name);
+    h+='</div></div>';
+  });
+  h+='</div>';
+  return h;
+}
+
+function rRequests(desk){
+  var h='';
+  if(desk) h+='<div class="phd">Заявки на регистрацию</div>';
+  if(S.reqMsg) h+='<div class="req-msg '+(S.reqOk?'ok':'no')+'">'+(S.reqOk?ico('check','14')+' ':ico('x','14')+' ')+S.reqMsg+'</div>';
+  var list=[];
+  PENDING_REQS.forEach(function(r,i){
+    var show=(S.role==='DIRECTOR')?(r.role==='TEACHER'||r.role==='CURATOR'):(r.role==='STUDENT');
+    if(show) list.push({r:r,i:i});
+  });
+  // Task5: sort by date descending (newest first), entries without date go last
+  list.sort(function(a,b){
+    var da=a.r.date||'',db=b.r.date||'';
+    if(da===db)return 0;
+    return da>db?-1:1;
+  });
+  if(!list.length) return h+'<div class="empty-state">'+ico('check','44')+'<p>Новых заявок нет</p></div>';
+  h+='<div class="slist">';
+  list.forEach(function(item){
+    var r=item.r,i=item.i;
+    h+='<div class="req-card">'
+      +'<div class="av" style="background:var(--pr-l);color:var(--pr)">'+r.name[0]+'</div>'
+      +'<div style="flex:1"><div class="sn">'+esc(r.name)+'</div>'
+      +'<div class="ss">'+esc(r.rl)+' · '+esc(r.email)+'</div>'
+      +(r.grp?'<div class="ss">'+esc(r.grp)+'</div>':'')
+      +(r.date?'<div class="ss" style="color:var(--tx2);font-size:11px">Дата заявки: '+esc(r.date)+'</div>':'')+'</div>'
+      +'<div style="display:flex;gap:6px">'
+      +'<button class="btn-ok" aria-label="Одобрить заявку" data-a="reqapprove" data-v="'+i+'">'+ico('check','14')+'</button>'
+      +'<button class="xb" aria-label="Отклонить заявку" data-a="reqreject" data-v="'+i+'">'+ico('x','12')+'</button></div></div>';
+  });
+  h+='</div>';
+  return h;
+}
+
+function rJournal(desk){
+  var sorted=visibleStudents().slice().sort(function(a,b){return a.name.localeCompare(b.name,'ru');});
+  var activeAtt=S.role==='TEACHER'?S.attTR:(S.role==='CURATOR'?S.attFin:S.attHM);
+  var pc=0;sorted.forEach(function(s){if((activeAtt[ST.indexOf(s)]||'P')==='P')pc++;});
+  var h='';
+  if(desk) h+='<div class="phd">Журнал посещаемости</div>';
+  if(S.role==='CURATOR'){
+    var conflicts=0;
+    sorted.forEach(function(s){var i=ST.indexOf(s);if(!S.confResolved[i]&&(S.attHM[i]||'P')!==(S.attTR[i]||'P'))conflicts++;});
+    if(S.sessionClosed){
+      h+='<div class="session-closed-banner">'+ico('check','16')+' Занятие закрыто и отправлено в архив</div>';
+    } else if(conflicts>0){
+      h+='<div class="conf-banner">'+ico('warning','16')+' Расхождений: '+conflicts+' — проверьте по каждому студенту</div>';
+    }
+  }
+  var _hmUnm=sorted.filter(function(s){return S.attHMSet[ST.indexOf(s)]===undefined;}).length;
+  var subjOpts='';SUBS.forEach(function(sb){subjOpts+='<option value="'+sb+'"'+(S.currentSubject===sb?' selected':'')+'>'+sb+'</option>';});
+  h+='<div class="gstrip"><span class="gd">'+ico('clock','13')+' '+new Date(S.sessionDate+'T12:00:00').toLocaleDateString('ru-RU',{day:'2-digit',month:'long',year:'numeric'})+'</span>'
+    +'<span class="gb">'+pc+'/'+sorted.length+' прис.'+(S.role==='HEADMAN'&&_hmUnm>0?' <span style="color:#D97706;font-weight:700">('+_hmUnm+' не отм.)</span>':'')+'</span></div>';
+  if(!S.sessionClosed)
+    h+='<div class="session-controls" style="padding:0 0 8px;display:flex;align-items:center;gap:8px">'
+      +'<label for="sessionSubject" style="font-size:12px;color:var(--tx2);white-space:nowrap">Предмет:</label>'
+      +'<select class="inp" style="margin:0;flex:1" id="sessionSubject" data-a="subjectSelect">'+subjOpts+'</select><input class="inp" type="date" style="margin:0;width:150px" id="sessionDate" data-a="dateSelect" value="'+S.sessionDate+'" aria-label="Дата занятия"></div>';
+  if(S.role==='HEADMAN'&&!S.sessionClosed){
+    h+='<div style="padding:0 0 8px"><button class="btn-ol" style="font-size:12px" data-a="markAllPresent">'
+      +ico('check','14')+' Отметить всех — Присутствует</button></div>';
+  }
+  h+='<div class="slist">';
+  sorted.forEach(function(s){
+    var idx=ST.indexOf(s),cur=activeAtt[idx]||'P',stObj=ATT[0];
+    ATT.forEach(function(a){if(a.k===cur)stObj=a;});
+    var chips='';
+    if(S.sessionClosed){
+      chips='<span class="chip '+stObj.cl+' on" style="pointer-events:none">'+stObj.l+'</span>';
+    } else {
+      ATT.forEach(function(a){
+        chips+='<button class="chip '+a.cl+(cur===a.k?' on':'')+'" data-a="att" data-idx="'+idx+'" data-v="'+a.k+'">'+a.l+'</button>';
+      });
+    }
+    var hmBtn=(S.role==='CURATOR')?
+      '<button class="hm-btn'+(s.hm?' active':'')+'" data-a="setHeadman" data-idx="'+idx+'" title="'+(s.hm?'Снять старосту':'Назначить старостой')+'">'+(s.hm?'★':'☆')+'</button>':'';
+    var confSection='';
+    if(S.role==='CURATOR'&&!S.sessionClosed){
+      var hv=S.attHM[idx]||'P',tv=S.attTR[idx]||'P';
+      if(hv!==tv&&!S.confResolved[idx]){
+        var hmA=ATT[0],trA=ATT[0];
+        ATT.forEach(function(a){if(a.k===hv)hmA=a;if(a.k===tv)trA=a;});
+        confSection='<div class="conf-row">'
+          +'<span class="conf-lbl">HM:</span><span class="conf-chip chip '+hmA.cl+'">'+hmA.l+'</span>'
+          +'<button class="accept-btn" data-a="acceptHM" data-idx="'+idx+'">← принять</button>'
+          +'<span class="conf-lbl">TR:</span><span class="conf-chip chip '+trA.cl+'">'+trA.l+'</span>'
+          +'<button class="accept-btn" data-a="acceptTR" data-idx="'+idx+'">← принять</button></div>';
+      }
+    }
+    var _bg=cur==='N'?'rgba(239,68,68,0.05)':(cur==='U'?'rgba(245,158,11,0.05)':'');
+    var _cd=(S.role==='CURATOR'&&!S.sessionClosed&&(S.attHM[idx]||'P')!==(S.attTR[idx]||'P'))?
+      '<span title="Конфликт отметок" style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#F59E0B;margin-right:4px;vertical-align:middle"></span>':'';
+    h+='<div class="card" style="background:'+_bg+';padding:0;margin-bottom:8px">'
+      +'<div class="jrow">'
+      +'<div class="av" style="background:'+stObj.color+'18;color:'+stObj.color+'">'+s.name[0]+'</div>'
+      +'<div class="jinfo"><div class="jname">'+_cd+esc(s.name)+(s.hm?'<span class="hm-badge">С-Стар.</span>':'')+'</div>'
+      +'<div class="jsub">'+esc(S.grp)+'</div></div>'
+      +hmBtn+'<div class="chips">'+chips+'</div></div>'+confSection+'</div>';
+  });
+  h+='</div>';
+  if(S.role==='CURATOR'&&!S.sessionClosed){
+    var _unm=sorted.filter(function(s){return S.attHMSet[ST.indexOf(s)]===undefined;}).length;
+    if(_unm>0)h+='<div class="unfill-banner">'+ico('warning','16')+' '+_unm+' студ. без отметки старосты</div>';
+    h+='<div style="margin-top:4px"><button class="btn btn-pr" data-a="closesession"'+(conflicts>0?' disabled aria-disabled="true"':'')+'>Закрыть занятие</button>'+(conflicts>0?'<div style="font-size:11px;color:var(--rd);margin-top:7px">Сначала разрешите все расхождения</div>':'')+'</div>';
+  } else if(S.role!=='CURATOR'){
+    // Кнопка сохранения — всегда (и Android, и Desktop)
+    h+='<div class="jact">';
+    h+='<button class="btn btn-pr" style="max-width:180px" data-a="savedone">'
+      +ico('check','16')+' Сохранить</button>';
+    if(desk) h+='<button class="btn-ol" style="max-width:120px" data-a="csv">CSV</button>';
+    h+='<span id="smsg" style="display:none;color:var(--gr);font-weight:700;font-size:13px">✓ Сохранено</span></div>';
+  }
+  if(S.role==='DIRECTOR'){
+    h+='<div class="slbl">Отчисление</div><div class="slist">';
+    sorted.forEach(function(s2){
+      h+='<div class="tr"><span style="flex:1;font-size:13px;font-weight:700">'+esc(s2.name)+'</span>'
+        +'<button class="xb" data-a="expelBtn" data-sname="'+esc(s2.name)+'" data-grp="'+S.grp+'">Отчислить</button></div>';
+    });
+    h+='</div>';
+  }
+  var _gx=S.storeExpelled.filter(function(e){return e.grp===S.grp;});
+  if(_gx.length){
+    h+='<div class="slbl" style="color:var(--rd)">Отчисленные</div><div class="slist">';
+    _gx.forEach(function(ex){
+      var ri=S.storeExpelled.indexOf(ex);
+      h+='<div class="tr"><span style="flex:1;font-size:13px;font-weight:700">'+esc(ex.name)+'<br>'
+        +'<span style="font-size:11px;color:var(--tx2)">до '+(ex.until?esc(ex.until):ex.date)+'</span></span>';
+      if(S.role==='DIRECTOR') h+='<button class="btn btn-pr" style="font-size:12px;padding:5px 12px;width:auto" data-a="restoreStudent" data-ei="'+ri+'">Восстановить</button>';
+      h+='</div>';
+    });
+    h+='</div>';
+  }
+  return h;
+}
+
+function rStats(desk){
+  var canAll=['HEADMAN','TEACHER','CURATOR','DIRECTOR'].indexOf(S.role)>=0;
+  var students=visibleStudents();
+  var pc=0,nc=0,uc=0;
+  var aobj=(S.role==='TEACHER')?S.attTR:((S.role==='CURATOR'||S.role==='DIRECTOR')?S.attFin:S.attHM);
+  students.forEach(function(st){var k=ST.indexOf(st),val=aobj[k]||'P';if(val==='P')pc++;else if(val==='N')nc++;else if(val==='U')uc++;});
+  var avg=students.length?pc/students.length:0;
+  var h='';
+  if(desk) h+='<div class="phd">Статистика посещаемости</div>';
+  h+='<div class="stats-grid">'
+    +'<div class="stat-tile"><div class="stat-v" style="color:#059669">'+pc+'</div><div class="stat-l">Присут.</div></div>'
+    +'<div class="stat-tile"><div class="stat-v" style="color:#D97706">'+uc+'</div><div class="stat-l">Уваж.</div></div>'
+    +'<div class="stat-tile"><div class="stat-v" style="color:#DC2626">'+nc+'</div><div class="stat-l">Неуваж.</div></div>'
+    +'</div>';
+  h+='<div class="card pie-card"><div class="gname">'+esc(S.grp)+'</div>'
+    +ring(avg,avg>=0.75?'#10B981':'#EF4444',desk?120:96,desk?11:9)
+    +'<div class="leg"><div class="legi"><span class="dot" style="background:#10B981"></span>Прис.: <b>'+pc+'</b></div>'
+    +'<div class="legi"><span class="dot" style="background:#F59E0B"></span>Уваж.: <b>'+uc+'</b></div>'
+    +'<div class="legi"><span class="dot" style="background:#EF4444"></span>Неув.: <b>'+nc+'</b></div></div></div>';
+  students.forEach(function(s){
+    var isDgr=s.unex>=30,isWrn=s.unex>=25&&!isDgr;
+    var cl=isDgr?' danger':isWrn?' warn':'';
+    var hb=s.hm?'<span class="hm-badge">С-Стар.</span>':'';
+    var rc=isDgr?'#EF4444':isWrn?'#F59E0B':'#10B981';
+    var tot=s.unex+s.exc+20,pct=tot?Math.max(0,Math.round((1-s.unex/tot)*100)):100;
+    var wrn=isDgr?'<span style="color:#EF4444;font-size:11px;font-weight:700;margin-left:4px">⚠ 30+</span>':
+      isWrn?'<span style="color:#F59E0B;font-size:11px;font-weight:700;margin-left:4px">⚠ 25+</span>':'';
+    h+='<div class="scard'+cl+'" role="button" tabindex="0" data-a="detail" data-sname="'+esc(s.name)+'">'
+      +ring(pct/100,rc,50,5)
+      +'<div class="scinfo"><div class="sn">'+esc(s.name)+hb+wrn+'</div>'
+      +'<div class="ss">Пропусков: '+s.unex+' неув. / '+s.exc+' ув.</div></div></div>';
+  });
+  return h;
+}
+
+function rDir(desk){
+  var p=S.dp,h='';
+  if(desk) h+='<div class="phd">Управление</div>';
+  h+='<div class="bc"><span class="bci" data-a="dpath" data-depth="0">Кураторы</span>';
+  if(p.length>=1) h+='<span class="bcs"> › </span><span class="bci" data-a="dpath" data-depth="1" data-cur="'+esc(p[0])+'">'+esc(p[0])+'</span>';
+  if(p.length>=2) h+='<span class="bcs"> › </span><span class="bcc">'+esc(p[1])+'</span>';
+  h+='</div>';
+  if(p.length===0){
+    h+='<div class="dcg">';
+    CUR.forEach(function(c){
+      h+='<div class="dirc" role="button" tabindex="0" data-a="dpath" data-depth="1" data-cur="'+esc(c.name)+'">'
+        +'<div class="dic">'+ico('users','20')+'</div>'
+        +'<div><div class="dn">'+esc(c.name)+'</div><div class="ds">'+esc(c.email)+' · Групп: '+c.groups.length+'</div></div></div>';
+    });
+    h+='</div><div class="slbl">Учителя</div><div class="slist">';
+    TEACHERS.forEach(function(t){
+      h+='<div class="tr"><div class="dic" style="width:36px;height:36px;border-radius:8px">'+ico('journal','16')+'</div>'
+        +'<div style="flex:1"><div style="font-size:13px;font-weight:700">'+esc(t.name)+'</div>'
+        +'<div style="font-size:11px;color:var(--tx2)">'+esc(t.email)+'</div></div>'
+        +'<button class="xb" data-a="del" data-dname="'+esc(t.name)+'" data-dgrp="">'+ico('x','12')+'</button></div>';
+    });
+    h+='</div>';
+    // --- Create Group form ---
+    var grpKeys=Object.keys(GRP);
+    h+='<div class="slbl" style="margin-top:18px">Создать группу</div>'+'<div class="card" style="padding:14px 16px;margin-top:8px;display:flex;gap:8px;align-items:center">'+'<input id="newGrpInp" class="inp" placeholder="Название (напр.: ИС-31)" style="flex:1;margin:0">'+'<button class="btn btn-pr" style="width:auto;padding:7px 16px;font-size:13px" data-a="createGroup">Создать</button></div>';
+    // --- Assign Curator form ---
+    var curOpts='<option value="">— куратор —</option>';
+    CUR.forEach(function(c){curOpts+='<option value="'+esc(c.email)+'">'+esc(c.name)+'</option>';});
+    var grpOpts='<option value="">— группа —</option>';
+    grpKeys.forEach(function(g){grpOpts+='<option value="'+esc(g)+'">'+esc(g)+'</option>';});
+    h+='<div class="slbl" style="margin-top:18px">Прикрепить куратора к группе</div>'+'<div class="card" style="padding:14px 16px;margin-top:8px">'+'<div style="display:flex;gap:8px;margin-bottom:10px">'+'<select id="assignCurSel" class="inp" style="flex:1;margin:0">'+curOpts+'</select>'+'<select id="assignGrpSel" class="inp" style="flex:1;margin:0">'+grpOpts+'</select></div>'+'<button class="btn btn-pr" style="width:auto;padding:7px 16px;font-size:13px" data-a="assignCurator">Прикрепить</button></div>';
+    if(S.dirMsg)h+='<div class="req-msg '+(S.dirMsgOk?'ok':'no')+'">'+(S.dirMsgOk?ico('ok','13'):ico('x','13'))+' '+esc(S.dirMsg)+'</div>';
+  } else if(p.length===1){
+    var co=null;CUR.forEach(function(c){if(c.name===p[0])co=c;});
+    if(co){
+      h+='<div style="font-size:13px;color:var(--tx2);margin-bottom:12px">Куратор · '+esc(co.email)+'</div><div class="dcg">';
+      co.groups.forEach(function(g){
+        var gd=GRP[g]||{students:[]};
+        h+='<div class="dirc" role="button" tabindex="0" data-a="dpath" data-depth="2" data-cur="'+esc(p[0])+'" data-grp="'+esc(g)+'">'
+          +'<div class="dic">'+ico('grad','20')+'</div>'
+          +'<div><div class="dn">'+esc(g)+'</div><div class="ds">Студентов: '+gd.students.length+'</div></div></div>';
+      });
+      h+='</div>';
+    }
+  } else if(p.length===2){
+    var grp=GRP[p[1]];
+    if(grp){
+      h+='<div class="slbl">Учителя</div><div class="slist">';
+      grp.teachers.forEach(function(t){
+        h+='<div class="tr"><div class="dic" style="width:36px;height:36px;border-radius:8px">'+ico('journal','16')+'</div>'
+          +'<span style="flex:1;font-size:13px;font-weight:700">'+esc(t)+'</span>'
+          +'<button class="xb" data-a="del" data-dname="'+esc(t)+'" data-dgrp="'+esc(p[1])+'">'+ico('x','12')+'</button></div>';
+      });
+      h+='</div><div class="slbl">Студенты</div><div class="slist">';
+      sortST(grp.students).filter(function(s){return !s._expelled;}).forEach(function(s){
+        var isDgr=s.unex>=30,isWrn=s.unex>=25;
+        var cl=isDgr?' danger':isWrn?' warn':'';
+        var hb=s.hm?'<span class="hm-badge">С-Стар.</span>':'';
+        var rc=isDgr?'#EF4444':isWrn?'#F59E0B':'#10B981';
+        var tot=s.unex+s.exc+20,pct=tot?Math.max(0,Math.round((1-s.unex/tot)*100)):100;
+        h+='<div class="scard'+cl+'" role="button" tabindex="0" data-a="detail" data-sname="'+esc(s.name)+'">'
+          +ring(pct/100,rc,50,5)
+          +'<div class="scinfo"><div class="sn">'+esc(s.name)+hb
+          +'<span style="font-size:11px;font-weight:700;color:var(--tx2);margin-left:4px">❌'+s.unex+' ✅'+s.exc+'</span></div>'
+          +'<div class="ss">Пропусков: '+s.unex+' неув. / '+s.exc+' ув.</div></div>'
+          +'<button class="xb" style="align-self:stretch;margin-left:4px" data-a="expelBtn" data-sname="'+esc(s.name)+'" data-grp="'+esc(p[1])+'">Отч.</button></div>';
+      });
+      h+='</div>';
+    }
+  }
+  return h;
+}
+
+function rManage(desk){
+  if(S.role!=='CURATOR') return '<div class="card">Нет доступа.</div>';
+  var h='';
+  if(desk) h+='<div class="phd">Состав групп и учителя</div>';
+  var curObj=null;
+  CUR.forEach(function(c){if(c.name===S.user||c.email===S.user)curObj=c;});
+  var myGrps=curObj?curObj.groups:[];
+  if(!myGrps.length) return h+'<div class="empty-state">'+ico('users','44')+'<p>Нет прикреплённых групп</p></div>';
+  myGrps.forEach(function(grp){
+    var attached=GRP[grp]?GRP[grp].teachers||[]:
+    [];
+    h+='<div class="card"><div class="set-sec">'+esc(grp)+'</div>';
+    if(attached.length){
+      h+='<div class="slist" style="margin-bottom:12px">';
+      attached.forEach(function(tn){
+        h+='<div class="teacher-row"><span style="font-size:13px;font-weight:600">'+esc(tn)+'</span>'
+          +'<button class="xb" data-a="rmteacher" data-grp="'+esc(grp)+'" data-v="'+esc(tn)+'">'+ico('x','12')+'</button></div>';
+      });
+      h+='</div>';
+    } else {
+      h+='<div style="font-size:13px;color:var(--tx2);padding:8px 0;margin-bottom:10px">Учителей не назначено</div>';
+    }
+    var avail=TEACHERS.filter(function(t){return attached.indexOf(t.name)<0;});
+    if(avail.length){
+      h+='<div class="slbl" style="margin-top:0">Добавить учителя</div>'
+        +'<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">';
+      avail.forEach(function(t){
+        h+='<button class="btn-ol" style="width:auto;font-size:12px;padding:7px 13px" data-a="addteacher" data-grp="'+esc(grp)+'" data-v="'+esc(t.name)+'">+ '+esc(t.name)+'</button>';
+      });
+      h+='</div>';
+    }
+    h+='</div>';
+  });
+  return h;
+}
+
+function rData(desk){
+  if(S.role!=='DIRECTOR') return '<div class="card">Нет доступа.</div>';
+  var h='';
+  if(desk) h+='<div class="phd">Данные системы</div>';
+  var mnOpt='';for(var mi=1;mi<=12;mi++)mnOpt+='<option value="'+mi+'"'+(S.retainMo===mi?' selected':'')+'>'+mi+' мес.</option>';
+  h+='<div class="card"><div class="set-sec">Отчисленные студенты</div>'
+    +'<div class="fld" style="margin-bottom:10px"><label>Срок хранения</label><select class="inp" data-a="retainSelect">'+mnOpt+'</select></div>';
+  if(!S.storeExpelled.length){
+    h+='<div style="font-size:13px;color:var(--tx2)">Нет отчисленных.</div>';
+  } else {
+    S.storeExpelled.forEach(function(ex,ei){
+      h+='<div class="tr"><div style="flex:1"><div style="font-size:13px;font-weight:700">'+esc(ex.name)+'</div>'
+        +'<div style="font-size:11px;color:var(--tx2)">'+esc(ex.grp)+' до '+(ex.until?esc(ex.until):esc(ex.date))+'</div></div>'
+        +'<button class="btn btn-pr" style="font-size:12px;padding:5px 12px;width:auto" data-a="restoreStudent" data-ei="'+ei+'">Восстановить</button></div>';
     });
   }
+  h+='</div>';
+  var arOpt='';for(var ai=1;ai<=12;ai++)arOpt+='<option value="'+ai+'"'+(S.archiveMo===ai?' selected':'')+'>'+ai+' мес.</option>';
+  h+='<div class="card"><div class="set-sec">Автоочистка архива</div>'
+    +'<div class="fld"><label>Удалять записи старше</label><select class="inp" data-a="archivSelect">'+arOpt+'</select></div>'
+    +'<div style="font-size:12px;color:var(--tx2);margin-top:6px">Записей в архиве: '+S.archive.length+'</div></div>';
+  h+='<div class="card" style="border-color:rgba(239,68,68,.3)"><div class="set-sec" style="color:var(--rd)">Опасная зона</div>'
+    +'<div style="font-size:13px;color:var(--tx2);margin-bottom:12px">Полное удаление всех данных системы. Действие необратимо.</div>'
+    +'<button class="btn btn-danger" data-a="deleteAllDocs">Удалить всю документацию</button></div>';
+  return h;
+}
 
-  fetch('https://api.github.com/repos/' + REPO + '/releases?per_page=20')
-    .then(function(r) { return r.json(); })
-    .then(function(releases) {
-      var apkUrl = null, exeUrl = null, jarUrl = null;
-      var androidVer = '', windowsVer = '';
+function rSettings(desk){
+  var auto=S.tm==='auto',h='';
+  if(desk) h+='<div class="phd">Настройки</div>';
+  h+='<div class="card"><div class="set-sec">Оформление</div>'
+    +'<div class="fld"><label>Тема</label>'
+    +'<label class="chklbl"><input type="checkbox" id="autotheme" '+(auto?'checked':'')+' data-a="autotheme">'
+    +'<span>Автоматически (по системе)</span></label></div>'
+    +'<div class="seg">'
+    +'<button class="sgo'+((!auto&&S.tm==='light')?' on':'')+'"'+(auto?' disabled':'')+' data-a="theme" data-v="light">'+ico('sun','16')+' Светлая</button>'
+    +'<button class="sgo'+((!auto&&S.tm==='dark')?' on':'')+'"'+(auto?' disabled':'')+' data-a="theme" data-v="dark">'+ico('moon','16')+' Тёмная</button>'
+    +'</div></div>';
+  if(S.role==='CURATOR'){
+    var _cObj=null;CUR.forEach(function(c){if(c.name===S.user||c.email===S.user)_cObj=c;});
+    var _grps=(_cObj&&Array.isArray(_cObj.groups))?_cObj.groups:[];
+    if(_grps.length>0){
+      h+='<div class="card"><div class="set-sec">Учебная группа</div>'
+        +'<div class="grp-sw-bar">';
+      _grps.forEach(function(g){
+        h+='<button class="gsw'+(S.grp===g?' on':'')+'" data-a="switchgrp" data-v="'+esc(g)+'">'+esc(g)+'</button>';
+      });
+      h+='</div><div style="font-size:12px;color:var(--tx2);margin-top:8px">Группы назначаются директором</div></div>';
+    } else {
+      h+='<div class="card"><div class="set-sec">Учебная группа</div>'
+        +'<div style="font-size:13px;color:var(--tx2)">Групп ещё нет. Ожидайте назначения от директора.</div></div>';
+    }
+  }
+  h+='<div class="card"><div class="set-sec">Аккаунт</div>'
+    +'<div class="acc-name">'+esc(S.user)+'</div><div class="acc-role">'+esc(S.rl)+'</div>'
+    +'<button class="btn btn-danger" data-a="logout">Выйти из аккаунта</button></div>';
+  return h;
+}
 
-      for (var i = 0; i < releases.length; i++) {
-        var rel = releases[i];
-        var assets = rel.assets || [];
-        for (var j = 0; j < assets.length; j++) {
-          var a = assets[j];
-          if (!apkUrl && a.name.endsWith('.apk')) {
-            apkUrl = a.browser_download_url; androidVer = rel.tag_name;
-          }
-          if (!exeUrl && a.name.endsWith('.exe')) {
-            exeUrl = a.browser_download_url; windowsVer = rel.tag_name;
-          }
-          if (!jarUrl && a.name.endsWith('.jar')) {
-            jarUrl = a.browser_download_url;
-          }
+function openDetail(name){
+  var s=null;ST.forEach(function(x){if(x.name===name)s=x;});
+  if(!s)return;
+  var isDgr=s.unex>=30,isWrn=s.unex>=25;
+  var banner=isDgr?'<div class="modal-warn danger">Отклонений в зоне риска отчисления (30+)</div>':
+    isWrn?'<div class="modal-warn warn">Предупреждение: 25+ пропусков!</div>':'';
+  var left=Math.max(0,30-s.unex),rows='';
+  s.recs.forEach(function(r){
+    var cl=r.type==='unexcused'?'tn':'te',lb=r.type==='unexcused'?'Неуваж.':'Уваж.';
+    rows+='<tr><td>'+r.date+'</td><td>'+r.subject+'</td><td class="'+cl+'">'+lb+'</td></tr>';
+  });
+  if(!rows) rows='<tr><td colspan="3" style="text-align:center;color:var(--tx2)">Нет данных</td></tr>';
+  document.getElementById('mc').innerHTML='<div class="modal">'
+    +'<div class="mhd"><div class="mt">'+esc(s.name)+'</div><button class="xbtn" aria-label="Закрыть" data-a="closeModal">'+ico('x','16')+'</button></div>'
+    +banner
+    +'<div class="mstats">'
+    +'<div class="mstat" style="background:rgba(239,68,68,.06)"><div class="msv" style="color:#DC2626">'+s.unex+'</div><div class="msl">Неуваж.</div></div>'
+    +'<div class="mstat" style="background:rgba(245,158,11,.06)"><div class="msv" style="color:#D97706">'+s.exc+'</div><div class="msl">Уваж.</div></div>'
+    +'<div class="mstat" style="background:rgba(16,185,129,.06)"><div class="msv" style="color:#059669">'+left+'</div><div class="msl">До отч.</div></div>'
+    +'</div><div style="overflow-x:auto"><table class="dtbl">'
+    +'<thead><tr><th>Дата</th><th>Предмет</th><th>Статус</th></tr></thead>'
+    +'<tbody>'+rows+'</tbody></table></div></div>';
+  document.getElementById('ov').classList.add('open');
+}
+
+function expelStudent(name,grp,months){
+  if(S.role!=='DIRECTOR')return;
+  months=months||S.retainMo||3;
+  var now=new Date(),_u=new Date(now);
+  _u.setMonth(_u.getMonth()+months);
+  var eD=now.toISOString().slice(0,10),uD=_u.toISOString().slice(0,10);
+  var expelled=null;
+  for(var i=0;i<ST.length;i++){if(ST[i].name===name){expelled=ST[i];ST[i]._expelled=true;break;}}
+  if(expelled) S.storeExpelled.push({name:expelled.name,grp:grp,date:eD,until:uD,months:months,data:expelled});
+}
+
+function restoreStudent(ei){
+  if(S.role!=='DIRECTOR')return;
+  var ex=S.storeExpelled[ei];if(!ex)return;
+  S.storeExpelled.splice(ei,1);
+  ex.data._expelled=false;
+  if(!GRP[ex.grp])GRP[ex.grp]={teachers:[],students:[]};
+  if(GRP[ex.grp].students.indexOf(ex.data)<0)GRP[ex.grp].students.push(ex.data);
+  render();
+}
+
+function openLogout(){
+  document.getElementById('mc').innerHTML='<div class="dlg">'
+    +'<div class="dlt">Выйти из аккаунта?</div>'
+    +'<div class="dlm">Вы уверены? Потребуется повторный вход.</div>'
+    +'<div class="dlb"><button class="btn btn-danger" data-a="confirmLogout">Выйти</button>'
+    +'<button class="btn-ol" data-a="closeModal">Отмена</button></div></div>';
+  document.getElementById('ov').classList.add('open');
+}
+
+function closeModal(){document.getElementById('ov').classList.remove('open');}
+function toast(message){var old=document.querySelector('.toast');if(old)old.remove();var el=document.createElement('div');el.className='toast';el.textContent=message;document.body.appendChild(el);setTimeout(function(){if(el.parentNode)el.remove();},2600);}
+
+function handleClick(e){
+  var t=e.target.closest('[data-a]');
+  if(!t)return;
+  var a=t.dataset.a,v=t.dataset.v||'';
+  if(a==='mode'){S.mode=v;render();}
+  else if(a==='dark'){S.dark=!S.dark;S.tm=S.dark?'dark':'light';applyTheme();render();}
+  else if(a==='role'){S.lr=v;S.pe=false;render();}
+  else if(a==='eye'){
+    if(v==='2'){S.sp2=!S.sp2;var i2=document.getElementById('lpwd2');if(i2)i2.type=S.sp2?'text':'password';t.innerHTML=S.sp2?ico('eyeoff','17'):ico('eye','17');}
+    else{S.sp=!S.sp;var i1=document.getElementById('lpwd');if(i1)i1.type=S.sp?'text':'password';t.innerHTML=S.sp?ico('eyeoff','17'):ico('eye','17');}
+  }
+  else if(a==='login'){doLogin();}
+  else if(a==='register'){doRegister();}
+  else if(a==='step'){S.step=v;S.pe=false;S.sp=false;S.sp2=false;render();}
+  else if(a==='verify'){
+    var _ent='';
+    for(var _i=0;_i<6;_i++){var _ci=document.getElementById('ci'+_i);if(_ci)_ent+=_ci.value.trim();}
+    if(!S.loginCode||_ent!==S.loginCode){
+      var _cb=document.querySelector('.cinps');
+      if(_cb){_cb.style.animation='none';_cb.offsetHeight;_cb.style.animation='shake .3s';}
+      return;
+    }
+    if(S.flow==='login'){doApprove();}
+    else{
+      if(S.pendingReg){
+        var reqDate=new Date().toISOString().slice(0,10);
+        PENDING_REQS.push({role:S.pendingReg.role,rl:S.pendingReg.rl,name:S.pendingReg.name,email:S.pendingReg.email,grp:S.pendingReg.grp,date:reqDate});
+      }
+      S.step='awaiting';render();
+    }
+  }
+  else if(a==='approve'){doApprove();}
+  else if(a==='tab'){S.tab=parseInt(v,10);render();}
+  else if(a==='dtab'){S.dt=v;render();}
+  else if(a==='att'){
+    if(S.sessionClosed||['HEADMAN','TEACHER','CURATOR'].indexOf(S.role)<0)return;
+    var ai=parseInt(t.dataset.idx,10);
+    if(S.role==='TEACHER')S.attTR[ai]=v;
+    else if(S.role==='CURATOR')S.attFin[ai]=v;
+    else{S.attHM[ai]=v;S.attHMSet[ai]=true;}
+    delete S.confResolved[ai];
+    S.att[ai]=v;render();
+  }
+  else if(a==='detail'){
+    if(S.role==='STUDENT'&&t.dataset.sname!==S.user)return;
+    openDetail(t.dataset.sname);
+  }
+  else if(a==='acceptHM'){if(S.role!=='CURATOR'||S.sessionClosed)return;var ai2=parseInt(t.dataset.idx,10);S.attFin[ai2]=S.attHM[ai2]||'P';S.confResolved[ai2]=true;render();}
+  else if(a==='acceptTR'){if(S.role!=='CURATOR'||S.sessionClosed)return;var ai3=parseInt(t.dataset.idx,10);S.attFin[ai3]=S.attTR[ai3]||'P';S.confResolved[ai3]=true;render();}
+  else if(a==='closesession'){S.closeConfirm=true;render();}
+  else if(a==='closeSessionConfirm'){
+    if(S.role!=='CURATOR')return;
+    var unresolved=visibleStudents().filter(function(st){var i=ST.indexOf(st);return !S.confResolved[i]&&(S.attHM[i]||'P')!==(S.attTR[i]||'P');});
+    if(unresolved.length){toast('Разрешите '+unresolved.length+' расхожд. перед закрытием');return;}
+    var arcAtt={};
+    Object.keys(S.attFin).forEach(function(k){arcAtt[k]=S.attFin[k];});
+    if(S.archive.some(function(x){return x.key===sessionKey();})){toast('Это занятие уже находится в архиве');return;}
+    S.archive.push({key:sessionKey(),date:S.sessionDate,group:S.grp,studentNames:visibleStudents().map(function(x){return x.name;}),att:arcAtt,curator:S.user,subject:S.currentSubject});
+    S.sessionClosed=true;S.closeConfirm=false;render();
+  }
+  else if(a==='closeSessionCancel'){S.closeConfirm=false;render();}
+  else if(a==='markAllPresent'){
+    if(S.role!=='HEADMAN')return;
+    var _hadMarks=Object.keys(S.attHMSet).length>0;
+    if(_hadMarks&&!window.confirm('Перезаписать все текущие отметки на «Присутствует»?'))return;
+    ST.forEach(function(s,i){if(!s._expelled){S.attHM[i]='P';S.attHMSet[i]=true;S.att[i]='P';}});
+    render();
+  }
+  else if(a==='createGroup'){
+    if(S.role!=='DIRECTOR')return;
+    var gn=document.getElementById('newGrpInp');
+    var gnv=gn?gn.value.trim():'';
+    if(!gnv){S.dirMsg='Введите название группы';S.dirMsgOk=false;render();return;}
+    if(GRP[gnv]){S.dirMsg='Группа уже существует';S.dirMsgOk=false;render();return;}
+    GRP[gnv]={teachers:[],students:[]};
+    S.newGrpName='';S.dirMsg='Группа '+gnv+' создана';S.dirMsgOk=true;render();
+  }
+  else if(a==='assignCurator'){
+    if(S.role!=='DIRECTOR')return;
+    var acSel=document.getElementById('assignCurSel'),agSel=document.getElementById('assignGrpSel');
+    var acv=acSel?acSel.value:'',agv=agSel?agSel.value:'';
+    if(!acv||!agv){S.dirMsg='Выберите куратора и группу';S.dirMsgOk=false;render();return;}
+    if(!GRP[agv]){S.dirMsg='Группа не найдена';S.dirMsgOk=false;render();return;}
+    var curTgt=null;CUR.forEach(function(c){if(c.email===acv)curTgt=c;});
+    if(!curTgt){S.dirMsg='Куратор не найден';S.dirMsgOk=false;render();return;}
+    if(curTgt.groups.indexOf(agv)>=0){S.dirMsg='Уже прикреплено';S.dirMsgOk=false;render();return;}
+    curTgt.groups.push(agv);
+    S.assignCur='';S.assignGrp='';S.dirMsg='Куратор '+curTgt.name+' прикреплён к '+agv;S.dirMsgOk=true;render();
+  }
+  else if(a==='addteacher'){
+    if(S.role!=='CURATOR')return;
+    var grpA=t.dataset.grp,tnA=v;
+    var _curA=null;CUR.forEach(function(c){if(c.name===S.user||c.email===S.user)_curA=c;});
+    if(!_curA||_curA.groups.indexOf(grpA)<0)return;
+    if(!GRP[grpA])return; // Task2: группа не найдена в GRP → блокировать
+    if(!Array.isArray(GRP[grpA].teachers))GRP[grpA].teachers=[];
+    if(GRP[grpA].teachers.indexOf(tnA)<0)GRP[grpA].teachers.push(tnA);
+    render();
+  }
+  else if(a==='rmteacher'){
+    if(S.role!=='CURATOR')return;
+    var grpR=t.dataset.grp,tnR=v;
+    var _curR=null;CUR.forEach(function(c){if(c.name===S.user||c.email===S.user)_curR=c;});
+    if(!_curR||_curR.groups.indexOf(grpR)<0)return;
+    if(GRP[grpR]&&Array.isArray(GRP[grpR].teachers))GRP[grpR].teachers=GRP[grpR].teachers.filter(function(x){return x!==tnR;});
+    render();
+  }
+  else if(a==='setHeadman'){
+    var hi=parseInt(t.dataset.idx,10),wasHm=ST[hi].hm;
+    ST.forEach(function(s){s.hm=false;});
+    if(!wasHm)ST[hi].hm=true;
+    render();
+  }
+  else if(a==='reqapprove'||a==='reqreject'){
+    if(!((S.role==='DIRECTOR')||(S.role==='CURATOR')))return;
+    var qi=parseInt(v,10);
+    if(S.role==='DIRECTOR'&&['TEACHER','CURATOR'].indexOf(PENDING_REQS[qi]&&PENDING_REQS[qi].role)<0)return;
+    if(S.role==='CURATOR'&&(!PENDING_REQS[qi]||PENDING_REQS[qi].role!=='STUDENT'))return;
+    if(PENDING_REQS[qi]){
+      var qn=PENDING_REQS[qi].name;
+      S.reqMsg=a==='reqapprove'?(qn+' — принят(а) в систему'):(qn+' — заявка отклонена');
+      S.reqOk=(a==='reqapprove');
+      PENDING_REQS.splice(qi,1);
+      render();
+    }
+  }
+  else if(a==='dpath'){
+    if(S.role!=='DIRECTOR')return;
+    var depth=parseInt(t.dataset.depth,10);
+    if(depth===0)S.dp=[];
+    else if(depth===1)S.dp=[t.dataset.cur];
+    else if(depth===2)S.dp=[t.dataset.cur,t.dataset.grp];
+    render();
+  }
+  else if(a==='del'){
+    if(S.role!=='DIRECTOR')return;
+    var delName=t.dataset.dname||'',delGrp=t.dataset.dgrp||'';
+    if(!delName||!window.confirm('Удалить запись «'+delName+'»?'))return;
+    if(delGrp&&GRP[delGrp]&&Array.isArray(GRP[delGrp].teachers)){
+      GRP[delGrp].teachers=GRP[delGrp].teachers.filter(function(x){return x!==delName;});
+    } else {
+      TEACHERS=TEACHERS.filter(function(x){return x.name!==delName;});
+      WLIST_DIR=WLIST_DIR.filter(function(x){return x.name!==delName;});
+      Object.keys(GRP).forEach(function(g){if(Array.isArray(GRP[g].teachers))GRP[g].teachers=GRP[g].teachers.filter(function(x){return x!==delName;});});
+    }
+    render();
+  }
+  else if(a==='logout'){openLogout();}
+  else if(a==='confirmLogout'){closeModal();S.view='login';S.step='form';S.pe=false;render();}
+  else if(a==='closeModal'){closeModal();}
+  else if(a==='theme'){S.tm=v;S.dark=(v==='dark');applyTheme();render();}
+  else if(a==='autotheme'){S.tm=t.checked?'auto':(S.dark?'dark':'light');applyTheme();render();}
+  else if(a==='expelBtn'){
+    if(S.role!=='DIRECTOR')return;
+    S.expelTarget={name:t.dataset.sname,grp:t.dataset.grp};S.expelMo=S.retainMo||3;render();
+  }
+  else if(a==='expelConfirm'){
+    if(!S.expelTarget)return;
+    expelStudent(S.expelTarget.name,S.expelTarget.grp,S.expelMo);S.expelTarget=null;render();
+  }
+  else if(a==='expelCancel'){S.expelTarget=null;render();}
+  else if(a==='restoreStudent'){
+    if(S.role!=='DIRECTOR')return;
+    restoreStudent(parseInt(t.dataset.ei,10));
+  }
+  else if(a==='deleteAllDocs'){
+    if(S.role!=='DIRECTOR')return;
+    if(window.confirm('УДАЛИТЬ ВСЮ ДОКУМЕНТАЦИЮ? Необратимо.')&&window.confirm('Подтвердите ещё раз.')){
+      S.archive=[];S.storeExpelled=[];S.attHM={};S.attTR={};S.attFin={};S.att={};S.attHMSet={};S.confResolved={};S.sessionClosed=false;ST.forEach(function(st){st._expelled=false;st._purged=false;st.recs=makeRecs(st.unex,st.exc);});Object.keys(GRP).forEach(function(g){GRP[g].students=(GRP[g].students||[]).filter(function(st){return ST.indexOf(st)>=0;});});S.currentSubject=SUBS[0];S.sessionDate=new Date().toISOString().slice(0,10);S.archSubjFilter='';
+      ST.forEach(function(_,i){S.att[i]='P';S.attHM[i]='P';S.attFin[i]='P';S.attTR[i]='P';});
+      toast('Документация удалена');render();
+    }
+  }
+  else if(a==='savedone'){saveDemoState();toast('Изменения сохранены в демо-хранилище');var m=document.getElementById('smsg');if(m){m.style.display='inline';setTimeout(function(){m.style.display='none';},2500);}}
+  else if(a==='csv'){exportCSV();}
+  else if(a==='switchgrp'){
+    if(S.role!=='CURATOR')return;
+    var _cSw=null;if(Array.isArray(CUR))CUR.forEach(function(c){if(c.name===S.user||c.email===S.user)_cSw=c;});
+    if(!_cSw||!Array.isArray(_cSw.groups)||_cSw.groups.indexOf(v)<0)return;
+    S.grp=v;resetSessionForContext();render();
+  }
+}
+
+function showPwdErr(show){
+  S.pe=show;
+  var p2=document.getElementById('lpwd2'),em=document.getElementById('perrmsg');
+  if(p2)p2.classList.toggle('err',show);
+  if(em)em.textContent=show?'Пароли не совпадают':'';
+}
+
+document.addEventListener('keydown',function(e){if((e.key==='Enter'||e.key===' ')&&e.target.getAttribute('role')==='button'){e.preventDefault();e.target.click();}});
+
+function handleInput(e){
+  if(e.target.dataset.pwd){
+    var p1=document.getElementById('lpwd'),p2=document.getElementById('lpwd2');
+    if(p1&&p2){var mm=p2.value.length>0&&p1.value!==p2.value;if(mm!==S.pe)showPwdErr(mm);}
+  }
+  if(e.target.dataset.ci!==undefined){
+    var ci=parseInt(e.target.dataset.ci,10),vv=e.target.value.replace(/[^0-9]/g,'');
+    e.target.value=vv.slice(-1);
+    if(vv&&ci<5){var nx=document.getElementById('ci'+(ci+1));if(nx)nx.focus();}
+  }
+}
+
+function handleChange(e){
+  if(e.target.id==='autotheme'){S.tm=e.target.checked?'auto':(S.dark?'dark':'light');applyTheme();render();return;}
+  var _t=e.target.closest('[data-a]');
+  if(_t){
+    var _a=_t.dataset.a;
+    if(_a==='retainSelect'){S.retainMo=parseInt(_t.value,10);render();}
+    else if(_a==='subjectSelect'){S.currentSubject=_t.value;resetSessionForContext();render();}
+    else if(_a==='dateSelect'){S.sessionDate=_t.value||S.sessionDate;resetSessionForContext();render();}
+    else if(_a==='archiveFilter'){S.archSubjFilter=_t.value;render();}
+    else if(_a==='archivSelect'){S.archiveMo=parseInt(_t.value,10);render();}
+    else if(_a==='expelMoSel'){S.expelMo=parseInt(_t.value,10);}
+  }
+}
+
+function doLogin(){
+  var p1=document.getElementById('lpwd'),em=document.getElementById('lemail');
+  if(!p1||!em||!em.value.trim()||!p1.value.trim())return;
+  // Двухэтапная: генерируем и отправляем код
+  S.flow='login';
+  S.loginCode=String(Math.floor(100000+Math.random()*900000));
+  S.step='sent';
+  S.sp=false;
+  render();
+}
+
+function showRErr(show){S.re=show;render();}
+
+function doRegister(){
+  var fio=document.getElementById('lfio'),em=document.getElementById('lemail'),
+    p1=document.getElementById('lpwd'),p2=document.getElementById('lpwd2');
+  if(!fio||!em||!p1||!p2)return;
+  var fioVal=fio.value.trim(),emVal=em.value.trim().toLowerCase();
+  if(!fioVal||!emVal||!p1.value.trim())return;
+  if(p1.value!==p2.value){showPwdErr(true);return;}
+  showPwdErr(false);
+  // Whitelist check
+  var role=S.lr,found=false,grpVal='';
+  if(role==='STUDENT'){
+    // Check WLIST_CUR: values are arrays of {email,name}
+    var curKeys=Object.keys(WLIST_CUR);
+    for(var wi=0;wi<curKeys.length;wi++){
+      var curEmail=curKeys[wi],stList=WLIST_CUR[curEmail];
+      for(var si=0;si<stList.length;si++){
+        if(stList[si].email.toLowerCase()===emVal&&stList[si].name.toLowerCase()===fioVal.toLowerCase()){
+          found=true;
+          // Find curator's group
+          CUR.forEach(function(c){if(c.email.toLowerCase()===curEmail&&c.groups.length)grpVal=c.groups[0];});
+          break;
         }
-        if (apkUrl && exeUrl && jarUrl) break;
       }
-
-      if (apkUrl) document.getElementById('apk-btn').href = apkUrl;
-
-      var exeStatus = document.getElementById('exe-status');
-      var exeBtnText = document.getElementById('exe-btn-text');
-      if (exeUrl) {
-        document.getElementById('exe-btn').href = exeUrl;
-        document.getElementById('exe-btn').setAttribute('download', 'AttendanceJournal-Setup.exe');
-        exeBtnText.textContent = 'Скачать AttendanceJournal-Setup.exe';
-        exeStatus.style.display = 'none';
-      } else {
-        exeBtnText.textContent = 'Смотреть все выпуски';
-        exeStatus.textContent = '⏳ EXE сейчас собирается — загляните через 10 мин';
+      if(found)break;
+    }
+  } else if(role==='CURATOR'||role==='TEACHER'){
+    for(var di=0;di<WLIST_DIR.length;di++){
+      if(WLIST_DIR[di].email.toLowerCase()===emVal&&WLIST_DIR[di].name.toLowerCase()===fioVal.toLowerCase()&&WLIST_DIR[di].role===role){
+        found=true;break;
       }
+    }
+  } else {
+    found=true; // DIRECTOR / HEADMAN — no whitelist in demo
+  }
+  if(!found){showRErr(true);return;}
+  showRErr(false);
+  var rlMap={STUDENT:'Студент',HEADMAN:'Староста',TEACHER:'Учитель',CURATOR:'Куратор',DIRECTOR:'Директор'};
+  S.pendingReg={role:role,rl:rlMap[role]||role,name:fioVal,email:emVal,grp:grpVal};
+  S.flow='register';
+  S.loginCode=String(Math.floor(100000+Math.random()*900000));
+  S.step='sent';S.sp=false;S.sp2=false;render();
+}
 
-      if (jarUrl) document.getElementById('jar-btn').href = jarUrl;
+function doApprove(){
+  var rMap={
+    STUDENT:{rl:'Студент',user:'Козлова Мария',tab:0,dt:'stats'},
+    HEADMAN:{rl:'Староста',user:'Волкова Ольга',tab:0,dt:'journal'},
+    TEACHER:{rl:'Учитель',user:'Петров Алексей',tab:0,dt:'journal'},
+    CURATOR:{rl:'Куратор',user:'Смирнова Елена',tab:0,dt:'journal'},
+    DIRECTOR:{rl:'Директор',user:'Директор',tab:0,dt:'director'}
+  };
+  var r=rMap[S.lr];
+  if(r){Object.assign(S,r);S.role=S.lr;S.view='main';S.step='login';S.sp=false;S.sp2=false;render();}
+}
 
-      var parts = [];
-      if (androidVer) parts.push('Android ' + androidVer);
-      if (windowsVer) parts.push('Windows ' + windowsVer);
-      document.getElementById('latest-version').textContent = parts.length ? parts.join(' • ') : 'см. Releases';
-    })
-    .catch(function() {
-      document.getElementById('latest-version').textContent = 'см. Releases';
-      var s = document.getElementById('exe-status');
-      if (s) s.style.display = 'none';
-    });
+function applyTheme(){
+  var isDark=S.tm==='dark'||(S.tm==='auto'&&window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches);
+  if(isDark)document.body.setAttribute('data-dark','1');else document.body.removeAttribute('data-dark');
+}
 
-  showPlatform(detectPlatform());
+function exportCSV(){
+  var cell=function(v){return '"'+String(v==null?'':v).replace(/"/g,'""')+'"';};
+  var rows=[['Группа','Дата','Предмет','Студент','Статус','Неуважительные','Уважительные'].map(cell).join(',')];
+  visibleStudents().forEach(function(s){var i=ST.indexOf(s),v=(S.role==='TEACHER'?S.attTR:(S.role==='CURATOR'||S.role==='DIRECTOR'?S.attFin:S.attHM))[i]||'P',a=ATT.filter(function(x){return x.k===v;})[0]||ATT[0];rows.push([S.grp,S.sessionDate,S.currentSubject,s.name,a.l,s.unex,s.exc].map(cell).join(','));});
+  var a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(rows.join('\n'));a.download='journal-'+S.grp+'-'+S.sessionDate+'.csv';a.click();toast('CSV экспортирован');
+}
+
+document.addEventListener('click',handleClick);
+document.addEventListener('input',handleInput);
+document.addEventListener('change',handleChange);
+applyTheme();
+render();
+
 </script>
 </body>
 </html>
