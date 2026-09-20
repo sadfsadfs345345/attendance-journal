@@ -3,10 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Журнал посещаемости · Premium prototype · v6</title>
+<title>Журнал посещаемости · Premium prototype</title>
 <style>
 :root{--pr:#4F46E5;--pr-l:#EEF2FF;--pr-d:#3730A3;--gr:#10B981;--rd:#EF4444;--or:#F59E0B;--pu:#8B5CF6;--bg:#F4F6FB;--sf:#FFFFFF;--s2:#F0F2F8;--br:#E2E6F0;--tx:#1A1D2E;--tx2:#6B7490;--tx3:#9EA3B8;--sh:0 1px 3px rgba(30,40,80,.07),0 4px 12px rgba(30,40,80,.04);--r:12px;}
 body[data-dark]{--pr:#818CF8;--pr-l:#1C1F3D;--pr-d:#A5B4FC;--bg:#0D0F1C;--sf:#141729;--s2:#1A1E35;--br:#252A48;--tx:#E2E5F4;--tx2:#8B91BE;--tx3:#515778;--sh:0 1px 3px rgba(0,0,0,.3),0 4px 12px rgba(0,0,0,.2);}
+/* Five premium palettes, each with a tuned light and dark surface system. */
+body[data-palette="ocean"]{--pr:#0E7490;--pr-l:#ECFEFF;--pr-d:#155E75;--bg:#F2F8FA;--s2:#E7F3F6;--br:#D9E9EE;}
+body[data-palette="emerald"]{--pr:#059669;--pr-l:#ECFDF5;--pr-d:#047857;--bg:#F3FAF7;--s2:#E7F5EF;--br:#D8EDE3;}
+body[data-palette="rose"]{--pr:#E11D48;--pr-l:#FFF1F2;--pr-d:#BE123C;--bg:#FFF7F8;--s2:#FCECEF;--br:#F3DCE2;}
+body[data-palette="amber"]{--pr:#D97706;--pr-l:#FFF7ED;--pr-d:#B45309;--bg:#FFFBF5;--s2:#FFF3E2;--br:#F2E2C7;}
+body[data-dark][data-palette="indigo"]{--pr:#818CF8;--pr-l:#1C1F3D;--pr-d:#A5B4FC;--bg:#0D0F1C;--sf:#141729;--s2:#1A1E35;--br:#252A48;--tx:#E2E5F4;--tx2:#8B91BE;--tx3:#515778;}
+body[data-dark][data-palette="ocean"]{--pr:#22D3EE;--pr-l:#12323B;--pr-d:#67E8F9;--bg:#08161B;--sf:#102229;--s2:#15323B;--br:#21434D;--tx:#D9F7FB;--tx2:#86B7C1;--tx3:#52747D;}
+body[data-dark][data-palette="emerald"]{--pr:#34D399;--pr-l:#10372B;--pr-d:#6EE7B7;--bg:#081812;--sf:#10251C;--s2:#153329;--br:#24503E;--tx:#DDF7EA;--tx2:#8FC8AA;--tx3:#56816C;}
+body[data-dark][data-palette="rose"]{--pr:#FB7185;--pr-l:#3A1822;--pr-d:#FDA4AF;--bg:#1B0D12;--sf:#28131A;--s2:#381923;--br:#552635;--tx:#FFE4E8;--tx2:#D79AA5;--tx3:#8E5A66;}
+body[data-dark][data-palette="amber"]{--pr:#FBBF24;--pr-l:#392A0C;--pr-d:#FCD34D;--bg:#181208;--sf:#251B0C;--s2:#35260E;--br:#554016;--tx:#FFF1C7;--tx2:#D8B979;--tx3:#907642;}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--tx);font-size:14px;line-height:1.5}
 #app{padding-top:52px;min-height:100vh}
@@ -211,6 +221,34 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 @media(max-width:390px){.ph-t{font-size:14px}.pntab{font-size:8px}.pntab svg{width:20px;height:20px}.inp{font-size:13px}.dtbl th,.dtbl td{padding:7px 8px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 
+/* Premium theme switcher */
+.theme-toggle{height:34px;display:inline-flex;align-items:center;gap:7px;padding:4px 9px 4px 5px;border:1px solid var(--br);border-radius:18px;background:var(--s2);color:var(--tx2);cursor:pointer;font-size:11px;font-weight:800;transition:background .2s,border-color .2s,color .2s;}
+.theme-toggle:hover{border-color:var(--pr);color:var(--pr)}
+.theme-toggle:focus-visible,.theme-palette-btn:focus-visible,.theme-swatch:focus-visible{outline:3px solid color-mix(in srgb,var(--pr) 35%,transparent);outline-offset:2px}
+.theme-toggle-track{position:relative;width:40px;height:24px;border-radius:13px;background:var(--br);display:flex;align-items:center;padding:2px;transition:background .2s}
+.theme-toggle-thumb{width:20px;height:20px;border-radius:50%;background:var(--sf);color:var(--tx2);display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,.18);transform:translateX(0);transition:transform .25s cubic-bezier(.2,.8,.2,1),background .2s,color .2s}
+.theme-toggle-thumb svg{width:13px;height:13px}
+.theme-toggle.is-dark .theme-toggle-track{background:var(--pr)}
+.theme-toggle.is-dark .theme-toggle-thumb{transform:translateX(16px);color:var(--pr)}
+.theme-toggle-label{min-width:38px;text-align:left}
+.theme-palette-btn{height:34px;width:34px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--br);border-radius:10px;background:var(--s2);color:var(--tx2);cursor:pointer;transition:all .2s}
+.theme-palette-btn:hover,.theme-palette-btn.is-open{border-color:var(--pr);color:var(--pr);background:var(--pr-l)}
+.theme-palette-btn svg{width:16px;height:16px}
+.theme-panel{position:fixed;top:60px;right:16px;width:258px;padding:14px;background:var(--sf);border:1px solid var(--br);border-radius:16px;box-shadow:0 14px 40px rgba(25,35,70,.18);z-index:310;opacity:0;pointer-events:none;transform:translateY(-6px) scale(.98);transition:opacity .16s,transform .16s}
+.theme-panel.open{opacity:1;pointer-events:auto;transform:none}
+.theme-panel-title{font-size:11px;font-weight:900;color:var(--tx);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+.theme-panel-subtitle{font-size:11px;color:var(--tx2);margin:-5px 0 12px}
+.theme-swatches{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.theme-swatch{border:1px solid var(--br);background:var(--s2);border-radius:10px;padding:7px 3px 6px;cursor:pointer;color:var(--tx2);font-size:9px;font-weight:800;display:flex;flex-direction:column;align-items:center;gap:5px;transition:all .16s}
+.theme-swatch:hover{border-color:var(--pr);transform:translateY(-1px)}
+.theme-swatch.on{border-color:var(--pr);color:var(--pr);box-shadow:0 0 0 2px var(--pr-l)}
+.theme-dot{width:22px;height:22px;border-radius:50%;display:block;box-shadow:inset 0 0 0 3px rgba(255,255,255,.55)}
+.theme-swatch[data-v="indigo"] .theme-dot{background:#4F46E5}.theme-swatch[data-v="ocean"] .theme-dot{background:#0E7490}.theme-swatch[data-v="emerald"] .theme-dot{background:#059669}.theme-swatch[data-v="rose"] .theme-dot{background:#E11D48}.theme-swatch[data-v="amber"] .theme-dot{background:#D97706}
+body[data-dark] .theme-swatch[data-v="indigo"] .theme-dot{background:#818CF8}body[data-dark] .theme-swatch[data-v="ocean"] .theme-dot{background:#22D3EE}body[data-dark] .theme-swatch[data-v="emerald"] .theme-dot{background:#34D399}body[data-dark] .theme-swatch[data-v="rose"] .theme-dot{background:#FB7185}body[data-dark] .theme-swatch[data-v="amber"] .theme-dot{background:#FBBF24}
+.theme-setting-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}.theme-setting-row .theme-toggle{flex-shrink:0}
+.theme-setting-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+@media(max-width:520px){.theme-panel{top:58px;right:10px;left:10px;width:auto}.theme-toggle-label{display:none}.theme-toggle{padding-right:5px}.theme-palette-btn{width:32px}.tbar-title{display:none}}
+
 /* Premium interaction layer */
 .toast{position:fixed;right:24px;bottom:24px;z-index:1200;background:var(--tx);color:var(--sf);padding:12px 16px;border-radius:10px;box-shadow:0 8px 28px rgba(0,0,0,.22);font-size:13px;font-weight:700;animation:toastIn .22s ease-out}
 @keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
@@ -223,7 +261,10 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 <div id="app"></div>
 <div class="ov" id="ov"><div id="mc"></div></div>
 <script>
-// Topbar render (mode switcher + dark toggle)
+function sunIcon(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>'}
+function moonIcon(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>'}
+function paletteIcon(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 100 18h1.2a1.8 1.8 0 001.35-2.99l-.55-.63a1.8 1.8 0 011.35-2.99H17a4 4 0 004-4A7.4 7.4 0 0012 3z"/><circle cx="7.5" cy="11" r=".8" fill="currentColor"/><circle cx="9.2" cy="7.2" r=".8" fill="currentColor"/><circle cx="13.4" cy="6.5" r=".8" fill="currentColor"/><circle cx="16.2" cy="9" r=".8" fill="currentColor"/></svg>'}
+// Topbar render (mode switcher + premium theme controls)
 (function(){
   var tb = document.getElementById("topbar-mount");
   tb.innerHTML = '<div class="topbar">'
@@ -234,8 +275,17 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
     + '<div class="tbar-acts">'
     + '<button class="sw" id="sw-mob" data-a="mode" data-v="android"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="18" r="1"/></svg>Android</button>'
     + '<button class="sw" id="sw-dsk" data-a="mode" data-v="desktop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Desktop</button>'
-    + '<a class="sw" href="install.html" title="Скачать приложения" style="text-decoration:none">↗ Скачать</a>'
-    + '<button class="sw" id="sw-dark" data-a="dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>Тема</button>'
+    + '<button class="theme-toggle" id="sw-dark" data-a="dark" aria-label="Переключить светлую и тёмную тему" aria-pressed="false"><span class="theme-toggle-track"><span class="theme-toggle-thumb">'+sunIcon()+'</span></span><span class="theme-toggle-label">Светлая</span></button>'
+    + '<button class="theme-palette-btn" id="sw-palette" data-a="paletteToggle" aria-label="Выбрать цветовую тему" aria-expanded="false">'+paletteIcon()+'</button>'
+    + '</div></div>'
+    + '<div class="theme-panel" id="theme-panel" aria-label="Цветовые темы">'
+    + '<div class="theme-panel-title">Цвет оформления</div><div class="theme-panel-subtitle">Пять акцентных тем для любого режима</div>'
+    + '<div class="theme-swatches">'
+    + '<button class="theme-swatch" data-a="palette" data-v="indigo"><span class="theme-dot"></span>Индиго</button>'
+    + '<button class="theme-swatch" data-a="palette" data-v="ocean"><span class="theme-dot"></span>Океан</button>'
+    + '<button class="theme-swatch" data-a="palette" data-v="emerald"><span class="theme-dot"></span>Изумруд</button>'
+    + '<button class="theme-swatch" data-a="palette" data-v="rose"><span class="theme-dot"></span>Роза</button>'
+    + '<button class="theme-swatch" data-a="palette" data-v="amber"><span class="theme-dot"></span>Янтарь</button>'
     + '</div></div>';
 })();
 </script>
@@ -312,7 +362,7 @@ var ATT=[
 var S={
   mode:'android',view:'login',role:'HEADMAN',rl:'Староста',
   user:'Волкова Ольга',step:'login',tab:0,dt:'journal',
-  tm:'light',dark:false,dp:[],att:{},sp:false,sp2:false,pe:false,lr:'STUDENT',grp:'ИС-21',flow:'login',
+  tm:'light',dark:false,palette:'indigo',dp:[],att:{},sp:false,sp2:false,pe:false,lr:'STUDENT',grp:'ИС-21',flow:'login',
   reqMsg:'',reqOk:false,re:false,pendingReg:null,newGrpName:'',assignGrp:'',assignCur:'',dirMsg:'',dirMsgOk:false,
   attHM:{},attTR:{},attFin:{},archive:[],sessionClosed:false,currentSubject:SUBS[0],sessionDate:new Date().toISOString().slice(0,10),archSubjFilter:'',
   storeExpelled:[],retainMo:3,archiveMo:6,confResolved:{},
@@ -328,7 +378,7 @@ function saveDemoState(){
     localStorage.setItem(STORAGE_KEY,JSON.stringify({
       students:ST.map(function(x){return {name:x.name,unex:x.unex,exc:x.exc,hm:!!x.hm,_expelled:!!x._expelled,recs:x.recs||[]};}),
       pending:PENDING_REQS,curators:CUR,teachers:TEACHERS,groups:groupState,
-      ui:{mode:S.mode,tm:S.tm,grp:S.grp,currentSubject:S.currentSubject,sessionDate:S.sessionDate,archSubjFilter:S.archSubjFilter,archive:S.archive,storeExpelled:S.storeExpelled,retainMo:S.retainMo,archiveMo:S.archiveMo,attHM:S.attHM,attTR:S.attTR,attFin:S.attFin,att:S.att,attHMSet:S.attHMSet,confResolved:S.confResolved}
+      ui:{mode:S.mode,tm:S.tm,palette:S.palette,grp:S.grp,currentSubject:S.currentSubject,sessionDate:S.sessionDate,archSubjFilter:S.archSubjFilter,archive:S.archive,storeExpelled:S.storeExpelled,retainMo:S.retainMo,archiveMo:S.archiveMo,attHM:S.attHM,attTR:S.attTR,attFin:S.attFin,att:S.att,attHMSet:S.attHMSet,confResolved:S.confResolved}
     }));
   }catch(err){/* localStorage may be unavailable for file:// previews */}
 }
@@ -934,12 +984,17 @@ function rSettings(desk){
   var auto=S.tm==='auto',h='';
   if(desk) h+='<div class="phd">Настройки</div>';
   h+='<div class="card"><div class="set-sec">Оформление</div>'
-    +'<div class="fld"><label>Тема</label>'
+    +'<div class="theme-setting-row"><div><div style="font-size:13px;font-weight:800;color:var(--tx)">Режим интерфейса</div><div style="font-size:12px;color:var(--tx2);margin-top:2px">Переключайте оформление одним движением</div></div>'
+    +'<button class="theme-toggle'+(S.tm==='dark'?' is-dark':'')+'" data-a="dark" aria-label="Переключить тему"><span class="theme-toggle-track"><span class="theme-toggle-thumb">'+(S.tm==='dark'?moonIcon():sunIcon())+'</span></span><span class="theme-toggle-label">'+(S.tm==='dark'?'Тёмная':'Светлая')+'</span></button></div>'
     +'<label class="chklbl"><input type="checkbox" id="autotheme" '+(auto?'checked':'')+' data-a="autotheme">'
-    +'<span>Автоматически (по системе)</span></label></div>'
-    +'<div class="seg">'
-    +'<button class="sgo'+((!auto&&S.tm==='light')?' on':'')+'"'+(auto?' disabled':'')+' data-a="theme" data-v="light">'+ico('sun','16')+' Светлая</button>'
-    +'<button class="sgo'+((!auto&&S.tm==='dark')?' on':'')+'"'+(auto?' disabled':'')+' data-a="theme" data-v="dark">'+ico('moon','16')+' Тёмная</button>'
+    +'<span>Автоматически (по системе)</span></label>'
+    +'<div style="font-size:13px;font-weight:800;color:var(--tx);margin:16px 0 9px">Цветовой акцент</div>'
+    +'<div class="theme-setting-grid">'
+    +'<button class="theme-swatch'+(S.palette==='indigo'?' on':'')+'" data-a="palette" data-v="indigo"><span class="theme-dot"></span>Индиго</button>'
+    +'<button class="theme-swatch'+(S.palette==='ocean'?' on':'')+'" data-a="palette" data-v="ocean"><span class="theme-dot"></span>Океан</button>'
+    +'<button class="theme-swatch'+(S.palette==='emerald'?' on':'')+'" data-a="palette" data-v="emerald"><span class="theme-dot"></span>Изумруд</button>'
+    +'<button class="theme-swatch'+(S.palette==='rose'?' on':'')+'" data-a="palette" data-v="rose"><span class="theme-dot"></span>Роза</button>'
+    +'<button class="theme-swatch'+(S.palette==='amber'?' on':'')+'" data-a="palette" data-v="amber"><span class="theme-dot"></span>Янтарь</button>'
     +'</div></div>';
   if(S.role==='CURATOR'){
     var _cObj=null;CUR.forEach(function(c){if(c.name===S.user||c.email===S.user)_cObj=c;});
@@ -1026,6 +1081,8 @@ function handleClick(e){
   var a=t.dataset.a,v=t.dataset.v||'';
   if(a==='mode'){S.mode=v;render();}
   else if(a==='dark'){S.dark=!S.dark;S.tm=S.dark?'dark':'light';applyTheme();render();}
+  else if(a==='paletteToggle'){var panel=document.getElementById('theme-panel'),paletteButton=document.getElementById('sw-palette');if(panel){var open=!panel.classList.contains('open');panel.classList.toggle('open',open);if(paletteButton)paletteButton.setAttribute('aria-expanded',String(open));}}
+  else if(a==='palette'){S.palette=v||'indigo';var panel2=document.getElementById('theme-panel');if(panel2)panel2.classList.remove('open');var pb2=document.getElementById('sw-palette');if(pb2)pb2.setAttribute('aria-expanded','false');applyTheme();render();}
   else if(a==='role'){S.lr=v;S.pe=false;render();}
   else if(a==='eye'){
     if(v==='2'){S.sp2=!S.sp2;var i2=document.getElementById('lpwd2');if(i2)i2.type=S.sp2?'text':'password';t.innerHTML=S.sp2?ico('eyeoff','17'):ico('eye','17');}
@@ -1308,7 +1365,12 @@ function doApprove(){
 
 function applyTheme(){
   var isDark=S.tm==='dark'||(S.tm==='auto'&&window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches);
+  document.body.setAttribute('data-palette',S.palette||'indigo');
   if(isDark)document.body.setAttribute('data-dark','1');else document.body.removeAttribute('data-dark');
+  S.dark=isDark;
+  var toggle=document.getElementById('sw-dark');
+  if(toggle){toggle.classList.toggle('is-dark',isDark);toggle.setAttribute('aria-pressed',String(isDark));var th=toggle.querySelector('.theme-toggle-thumb');if(th)th.innerHTML=isDark?moonIcon():sunIcon();var lab=toggle.querySelector('.theme-toggle-label');if(lab)lab.textContent=isDark?'Тёмная':'Светлая';}
+  document.querySelectorAll('.theme-swatch').forEach(function(el){el.classList.toggle('on',el.dataset.v===S.palette);});
 }
 
 function exportCSV(){
