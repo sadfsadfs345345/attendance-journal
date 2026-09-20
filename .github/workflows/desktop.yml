@@ -35,7 +35,12 @@ jobs:
 
       - name: Build UberJAR
         working-directory: desktop
-        run: ./gradlew :app:packageUberJarForCurrentOS --no-daemon
+        shell: pwsh
+        run: .\gradlew.bat :app:packageUberJarForCurrentOS --no-daemon --stacktrace
+
+      - name: Install Inno Setup
+        shell: pwsh
+        run: choco install innosetup --no-progress --yes
 
       - name: Prepare JAR
         shell: pwsh
