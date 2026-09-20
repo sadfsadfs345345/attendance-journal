@@ -1,8 +1,5 @@
 package com.attendance.app.ui
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,318 +13,201 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import java.text.SimpleDateFormat
 import java.util.*
 
+enum class AttendanceStatus(val label: String, val short: String, val color: Color) {
+    PRESENT("Присутствует", "П", Color(0xFF2E8B57)),
+    EXCUSED("Уважительная причина", "УП", Color(0xFFB7791F)),
+    UNEXCUSED("Неуважительная причина", "НП", Color(0xFFC2413B))
+}
+
 data class AttendanceEntry(
-    val id: Long = System.currentTimeMillis(),
+    val id: Long,
     val name: String,
     val group: String,
-    val status: AttendanceStatus = AttendanceStatus.PRESENT
+    val headman: AttendanceStatus = AttendanceStatus.PRESENT,
+    val teacher: AttendanceStatus = AttendanceStatus.PRESENT,
+    val final: AttendanceStatus = AttendanceStatus.PRESENT,
+    val unexcused: Int = 0,
+    val excused: Int = 0
 )
 
-enum class AttendanceStatus(val label: String, val short: String, val color: Color) {
-    PRESENT("Присутствует", "П",  Color(0xFF43A047)),
-    ABSENT("Отсутствует", "НП", Color(0xFFE53935)),
-    LATE("Опоздал",     "УП", Color(0xFFFB8C00))
-}
+data class ArchivedLesson(
+    val date: String,
+    val subject: String,
+    val group: String,
+    val students: Int,
+    val curator: String
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AttendanceScreen(role: UserRole, userName: String, onLogout: () -> Unit) {
-    val students = remember {
-        listOf("Иванов Иван","Петрова Анна","Сидоров Пётр",
-            "Козлова Мария","Новиков Алексей","Фёдорова Елена",
-            "Морозов Дмитрий","Волкова Ольга")
+    val allStudents = remember {
+        listOf("Козлова Мария", "Иванов Иван", "Морозов Дмитрий", "Новиков Алексей",
+            "Петрова Анна", "Сидоров Пётр", "Фёдорова Елена", "Волкова Ольга")
+            .mapIndexed { i, name -> AttendanceEntry(i.toLong(), name, "ИС-21", unexcused = i % 4, excused = i % 3) }
     }
-    var entries by remember {
-        mutableStateOf(students.mapIndexed { i, n ->
-            AttendanceEntry(id = i.toLong(), name = n, group = "ИС-21")
-        })
+    val initial = remember(role, userName) {
+        val visible = if (role == UserRole.STUDENT) {
+            allStudents.filter { it.name.equals(userName, ignoreCase = true) }.ifEmpty { allStudents.take(1) }
+        } else allStudents
+        visible.mapIndexed { i, e ->
+            if (role == UserRole.CURATOR && i == 0) e.copy(headman = AttendanceStatus.PRESENT, teacher = AttendanceStatus.UNEXCUSED)
+            else if (role == UserRole.CURATOR && i == 3) e.copy(headman = AttendanceStatus.EXCUSED, teacher = AttendanceStatus.PRESENT)
+            else e
+        }
     }
-    var tab by remember { mutableIntStateOf(0) }
+    var entries by remember { mutableStateOf(initial) }
+    var selectedTab by remember { mutableStateOf(0) }
+    var subject by remember { mutableStateOf("Математика") }
+    var lessonDate by remember { mutableStateOf(SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())) }
+    var closed by remember { mutableStateOf(false) }
+    var saved by remember { mutableStateOf(false) }
+    var resolved by remember { mutableStateOf(setOf<Long>()) }
+    var archive by remember { mutableStateOf(listOf<ArchivedLesson>()) }
+    var notice by remember { mutableStateOf<String?>(null) }
+
+    val tabs = buildList {
+        add("Журнал")
+        add("Статистика")
+        if (role == UserRole.CURATOR || role == UserRole.DIRECTOR) add("Заявки")
+        if (role == UserRole.CURATOR || role == UserRole.DIRECTOR) add("Архив")
+        add("Настройки")
+    }
+    val conflicts = entries.count { it.headman != it.teacher && !resolved.contains(it.id) }
+    val current = tabs.getOrElse(selectedTab) { "Журнал" }
 
     Scaffold(topBar = {
         TopAppBar(
-            title = {
-                Column {
-                    Text("Журнал посещаемости", fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                    Text("${role.label} · $userName", fontSize = 12.sp,
-                        color = Color.White.copy(alpha = 0.80f))
-                }
-            },
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                titleContentColor = Color.White),
-            actions = {
-                IconButton(onClick = onLogout) {
-                    Icon(Icons.Filled.Logout, null, tint = Color.White)
-                }
-            }
+            title = { Column {
+                Text("Журнал посещаемости", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                Text("${role.label} · ${userName.ifBlank { "Демо-пользователь" }}", fontSize = 12.sp)
+            } },
+            actions = { IconButton(onClick = onLogout) { Icon(Icons.Default.Logout, "Выйти") } }
         )
-    }) { pad ->
-        Column(Modifier.fillMaxSize().padding(pad)) {
-            TabRow(selectedTabIndex = tab,
-                containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.primary) {
-                listOf("Журнал" to Icons.Filled.List,
-                    "Статистика" to Icons.Filled.BarChart,
-                    "Настройки" to Icons.Filled.Settings)
-                    .forEachIndexed { i, (title, icon) ->
-                        Tab(selected = tab == i, onClick = { tab = i },
-                            text = { Text(title, fontSize = 12.sp, fontWeight = if(tab==i) FontWeight.Bold else FontWeight.Normal) },
-                            icon = { Icon(icon, null, Modifier.size(18.dp)) })
-                    }
-            }
-            when (tab) {
-                0 -> AttendanceList(
-                    entries = entries,
-                    canEdit = role == UserRole.HEADMAN || role == UserRole.TEACHER,
-                    onStatusChange = { id, st -> entries = entries.map { if (it.id==id) it.copy(status=st) else it } }
-                )
-                1 -> ModernStatisticsTab(entries)
-                2 -> AndroidSettingsScreen()
-            }
-        }
-    }
-}
-
-/* ──────── Attendance List ──────── */
-
-@Composable
-fun AttendanceList(entries: List<AttendanceEntry>, canEdit: Boolean,
-                   onStatusChange: (Long, AttendanceStatus) -> Unit) {
-    val date = SimpleDateFormat("dd MMMM yyyy", Locale("ru")).format(Date())
-    val present = entries.count { it.status == AttendanceStatus.PRESENT }
-
-    Column {
-        // Gradient header card
-        Box(
-            Modifier.fillMaxWidth()
-                .background(Brush.horizontalGradient(
-                    listOf(MaterialTheme.colorScheme.primary,
-                           MaterialTheme.colorScheme.primary.copy(alpha = 0.75f))))
-                .padding(16.dp)
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Filled.CalendarToday, null, tint = Color.White, modifier = Modifier.size(18.dp))
-                Spacer(Modifier.width(8.dp))
-                Text(date, color = Color.White, fontSize = 14.sp, modifier = Modifier.weight(1f))
-                Surface(shape = RoundedCornerShape(20.dp), color = Color.White.copy(alpha = 0.25f)) {
-                    Text("$present / ${entries.size} присут.",
-                        color = Color.White, fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(horizontal=12.dp, vertical=5.dp), fontSize=13.sp)
+    }) { padding ->
+        Column(Modifier.fillMaxSize().padding(padding)) {
+            ScrollableTabRow(selectedTabIndex = selectedTab, edgePadding = 8.dp) {
+                tabs.forEachIndexed { index, label ->
+                    Tab(selected = selectedTab == index, onClick = { selectedTab = index },
+                        text = { Text(label, fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Normal) })
                 }
             }
-        }
-
-        LazyColumn(contentPadding = PaddingValues(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            items(entries, key = { it.id }) { entry ->
-                AttendanceRow(entry, canEdit, onStatusChange)
+            notice?.let { message ->
+                AssistChip(onClick = { notice = null }, label = { Text(message) },
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
+            }
+            when (current) {
+                "Журнал" -> JournalView(role, entries, subject, lessonDate, closed, conflicts, resolved,
+                    onSubject = { subject = it; closed = false; entries = initial; resolved = emptySet() },
+                    onDate = { lessonDate = it; closed = false; entries = initial; resolved = emptySet() },
+                    onMark = { id, status ->
+                        entries = entries.map { if (it.id == id) it.copy(final = status,
+                            headman = if (role == UserRole.HEADMAN) status else it.headman,
+                            teacher = if (role == UserRole.TEACHER) status else it.teacher) else it }
+                        saved = false
+                    },
+                    onResolve = { id, useTeacher ->
+                        entries = entries.map { if (it.id == id) it.copy(final = if (useTeacher) it.teacher else it.headman) else it }
+                        resolved = resolved + id
+                    },
+                    onMarkAll = { entries = entries.map { it.copy(final = AttendanceStatus.PRESENT) }; saved = false },
+                    onSave = { saved = true; notice = "Изменения сохранены локально" },
+                    onClose = {
+                        if (conflicts == 0) { archive = archive + ArchivedLesson(lessonDate, subject, "ИС-21", entries.size, userName); closed = true; notice = "Занятие закрыто и отправлено в архив" }
+                    }, saved = saved)
+                "Статистика" -> StatisticsView(entries)
+                "Заявки" -> RequestsView(role, notice = { notice = it })
+                "Архив" -> ArchiveView(archive)
+                "Настройки" -> AndroidSettingsScreen()
             }
         }
     }
 }
 
 @Composable
-fun AttendanceRow(entry: AttendanceEntry, canEdit: Boolean,
-                  onStatusChange: (Long, AttendanceStatus) -> Unit) {
-    var expanded by remember { mutableStateOf(false) }
-    Card(
-        Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(14.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-    ) {
-        Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
-            // Avatar circle
-            Box(
-                Modifier.size(44.dp).clip(CircleShape)
-                    .background(entry.status.color.copy(alpha = 0.15f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(entry.name.first().toString(), fontWeight = FontWeight.Bold,
-                    color = entry.status.color, fontSize = 18.sp)
-            }
-            Spacer(Modifier.width(14.dp))
-            Column(Modifier.weight(1f)) {
-                Text(entry.name, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
-                Text(entry.group, fontSize = 11.sp,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f))
-            }
-            if (canEdit) {
-                Box {
-                    Surface(
-                        onClick = { expanded = true },
-                        shape = RoundedCornerShape(10.dp),
-                        color = entry.status.color.copy(alpha = 0.12f)
-                    ) {
-                        Row(Modifier.padding(horizontal=12.dp, vertical=7.dp),
-                            verticalAlignment = Alignment.CenterVertically) {
-                            Text(entry.status.short, fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold, color = entry.status.color)
-                            Icon(Icons.Filled.KeyboardArrowDown, null,
-                                Modifier.size(16.dp), tint = entry.status.color)
-                        }
-                    }
-                    DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                        AttendanceStatus.values().forEach { st ->
-                            DropdownMenuItem(
-                                text = {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Box(Modifier.size(10.dp).clip(CircleShape)
-                                            .background(st.color))
-                                        Spacer(Modifier.width(10.dp))
-                                        Text(st.label)
-                                    }
-                                },
-                                onClick = { onStatusChange(entry.id, st); expanded = false }
-                            )
-                        }
-                    }
-                }
-            } else {
-                Surface(shape = RoundedCornerShape(10.dp), color = entry.status.color.copy(0.12f)) {
-                    Text(entry.status.label, color = entry.status.color,
-                        Modifier.padding(horizontal=10.dp, vertical=5.dp),
-                        fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
-                }
-            }
-        }
-    }
-}
-
-/* ──────── Statistics ──────── */
-
-@Composable
-fun ModernStatisticsTab(entries: List<AttendanceEntry>) {
-    val total   = entries.size.coerceAtLeast(1)
-    val present = entries.count { it.status == AttendanceStatus.PRESENT }
-    val absent  = entries.count { it.status == AttendanceStatus.ABSENT }
-    val late    = entries.count { it.status == AttendanceStatus.LATE }
-    val presF   = present.toFloat() / total
-    val absF    = absent.toFloat()  / total
-    val lateF   = late.toFloat()    / total
-    val avgF    = presF
-
-    LazyColumn(
-        Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        item {
-            Text("Общая статистика", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        }
-        // Big circular ring at top
-        item {
-            Card(Modifier.fillMaxWidth(), shape = RoundedCornerShape(20.dp),
-                elevation = CardDefaults.cardElevation(3.dp)) {
-                Box(
-                    Modifier.fillMaxWidth()
-                        .background(Brush.verticalGradient(
-                            listOf(MaterialTheme.colorScheme.primary.copy(alpha=0.08f), Color.Transparent))),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(Modifier.padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("Посещаемость группы",
-                            style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-                        Spacer(Modifier.height(16.dp))
-                        CircleRing(pct = presF, color = Color(0xFF43A047), size = 140.dp,
-                            stroke = 14.dp, label = "%.0f%%".format(presF*100),
-                            sub = "$present / $total")
-                        Spacer(Modifier.height(16.dp))
-                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                            LegendDot("Присут.", Color(0xFF43A047), present)
-                            LegendDot("Отсут.", Color(0xFFE53935), absent)
-                            LegendDot("Опоздал", Color(0xFFFB8C00), late)
-                        }
-                    }
-                }
-            }
-        }
-        // Detail rings row
-        item {
-            Card(Modifier.fillMaxWidth(), shape = RoundedCornerShape(20.dp),
-                elevation = CardDefaults.cardElevation(3.dp)) {
-                Row(Modifier.fillMaxWidth().padding(20.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly) {
-                    CircleRing(absF,  Color(0xFFE53935), 88.dp, 10.dp, "%.0f%%".format(absF*100), "Отсутствует")
-                    CircleRing(lateF, Color(0xFFFB8C00), 88.dp, 10.dp, "%.0f%%".format(lateF*100), "Опоздал")
-                    CircleRing(if(presF>=0.75f)1f else presF/0.75f,
-                        if(presF>=0.75f) Color(0xFF43A047) else Color(0xFFE53935),
-                        88.dp, 10.dp,
-                        if(presF>=0.75f) "✓ OK" else "⚠ < 75",
-                        "Порог 75%")
-                }
-            }
-        }
-        // Per-student cards
-        items(entries) { entry ->
-            Card(Modifier.fillMaxWidth(), shape = RoundedCornerShape(14.dp),
-                elevation = CardDefaults.cardElevation(1.dp)) {
-                Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Box(Modifier.size(36.dp).clip(CircleShape)
-                        .background(entry.status.color.copy(alpha=0.15f)),
-                        contentAlignment = Alignment.Center) {
-                        Text(entry.name.first().toString(),
-                            fontWeight = FontWeight.Bold, color = entry.status.color)
-                    }
-                    Spacer(Modifier.width(12.dp))
-                    Text(entry.name, Modifier.weight(1f), fontWeight = FontWeight.Medium)
-                    Surface(shape = RoundedCornerShape(8.dp), color = entry.status.color.copy(0.12f)) {
-                        Text(entry.status.label, color = entry.status.color,
-                            Modifier.padding(horizontal=8.dp, vertical=3.dp),
-                            fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun CircleRing(
-    pct: Float, color: Color,
-    size: Dp = 100.dp, stroke: Dp = 10.dp,
-    label: String = "", sub: String = ""
+private fun JournalView(
+    role: UserRole, entries: List<AttendanceEntry>, subject: String, date: String,
+    closed: Boolean, conflicts: Int, resolved: Set<Long>,
+    onSubject: (String) -> Unit, onDate: (String) -> Unit,
+    onMark: (Long, AttendanceStatus) -> Unit, onResolve: (Long, Boolean) -> Unit,
+    onMarkAll: () -> Unit, onSave: () -> Unit, onClose: () -> Unit, saved: Boolean
 ) {
-    var target by remember { mutableFloatStateOf(0f) }
-    LaunchedEffect(Unit) { target = pct.coerceIn(0f, 1f) }
-    val animated by animateFloatAsState(target, tween(1000), label = "ring")
-
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(Modifier.size(size), contentAlignment = Alignment.Center) {
-            Canvas(Modifier.fillMaxSize()) {
-                val sw = stroke.toPx()
-                drawArc(Color.Gray.copy(alpha=0.12f), 0f, 360f, false, style = Stroke(sw, cap = StrokeCap.Round))
-                if (animated > 0f)
-                    drawArc(color, -90f, 360f * animated, false, style = Stroke(sw, cap = StrokeCap.Round))
-            }
-            Text(label, fontWeight = FontWeight.Bold,
-                fontSize = if (size >= 120.dp) 20.sp else 13.sp, color = color)
+    var subjectText by remember(subject) { mutableStateOf(subject) }
+    Column(Modifier.fillMaxSize()) {
+        Row(Modifier.fillMaxWidth().padding(16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            OutlinedTextField(subjectText, { subjectText = it; onSubject(it) }, label = { Text("Предмет") }, modifier = Modifier.weight(1f), singleLine = true)
+            OutlinedTextField(date, onDate, label = { Text("Дата") }, modifier = Modifier.width(150.dp), singleLine = true)
         }
-        if (sub.isNotEmpty()) {
-            Spacer(Modifier.height(4.dp))
-            Text(sub, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center)
+        if (role == UserRole.CURATOR && conflicts > 0 && !closed)
+            Card(Modifier.fillMaxWidth().padding(horizontal = 16.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)) {
+                Text("Расхождений: $conflicts — разрешите каждую строку", Modifier.padding(12.dp), color = MaterialTheme.colorScheme.onErrorContainer, fontWeight = FontWeight.Bold)
+            }
+        Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+            Text("ИС-21", fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+            Text("${entries.count { it.final == AttendanceStatus.PRESENT }} / ${entries.size} присутствуют", color = MaterialTheme.colorScheme.primary)
+        }
+        if (role == UserRole.HEADMAN && !closed) OutlinedButton(onClick = onMarkAll, Modifier.padding(horizontal = 16.dp)) { Text("Отметить всех присутствующими") }
+        LazyColumn(Modifier.weight(1f), contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            items(entries, key = { it.id }) { entry ->
+                StudentAttendanceRow(entry, role, closed, entry.headman != entry.teacher && !resolved.contains(entry.id), onMark, onResolve)
+            }
+        }
+        Row(Modifier.fillMaxWidth().padding(16.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            if (role == UserRole.CURATOR) {
+                Button(onClick = onClose, enabled = !closed && conflicts == 0, modifier = Modifier.weight(1f)) { Text(if (closed) "Занятие закрыто" else "Закрыть занятие") }
+            } else if (role != UserRole.STUDENT) {
+                Button(onClick = onSave, enabled = !closed, modifier = Modifier.weight(1f)) { Text(if (saved) "Сохранено" else "Сохранить") }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun StudentAttendanceRow(entry: AttendanceEntry, role: UserRole, closed: Boolean, conflict: Boolean,
+    onMark: (Long, AttendanceStatus) -> Unit, onResolve: (Long, Boolean) -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+    val editable = !closed && (role == UserRole.HEADMAN || role == UserRole.TEACHER || role == UserRole.CURATOR)
+    Card(Modifier.fillMaxWidth(), shape = RoundedCornerShape(14.dp), colors = CardDefaults.cardColors(containerColor = if (conflict) MaterialTheme.colorScheme.errorContainer.copy(alpha = .35f) else MaterialTheme.colorScheme.surface)) {
+        Column(Modifier.padding(12.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(Modifier.size(40.dp).clip(CircleShape).background(entry.final.color.copy(alpha = .14f)), contentAlignment = Alignment.Center) { Text(entry.name.first().toString(), color = entry.final.color, fontWeight = FontWeight.Bold) }
+                Spacer(Modifier.width(12.dp)); Column(Modifier.weight(1f)) { Text(entry.name, fontWeight = FontWeight.SemiBold); Text(entry.group, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                if (editable) Box {
+                    AssistChip(onClick = { expanded = true }, label = { Text(entry.final.short) }, leadingIcon = { Icon(Icons.Default.Edit, "Изменить", Modifier.size(16.dp)) })
+                    DropdownMenu(expanded, { expanded = false }) { AttendanceStatus.values().forEach { s -> DropdownMenuItem(text = { Text(s.label) }, onClick = { onMark(entry.id, s); expanded = false }) } }
+                } else Text(entry.final.label, color = entry.final.color, fontWeight = FontWeight.Bold)
+            }
+            if (conflict && role == UserRole.CURATOR) Row(Modifier.fillMaxWidth().padding(top = 10.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text("Староста: ${entry.headman.short}", Modifier.weight(1f), fontSize = 12.sp)
+                TextButton(onClick = { onResolve(entry.id, false) }) { Text("Принять") }
+                Text("Учитель: ${entry.teacher.short}", Modifier.weight(1f), fontSize = 12.sp)
+                TextButton(onClick = { onResolve(entry.id, true) }) { Text("Принять") }
+            }
         }
     }
 }
 
 @Composable
-fun LegendDot(label: String, color: Color, count: Int) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Box(Modifier.size(10.dp).clip(CircleShape).background(color))
-        Spacer(Modifier.width(6.dp))
-        Text("$label: $count", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurface.copy(0.75f))
+private fun StatisticsView(entries: List<AttendanceEntry>) {
+    val present = entries.count { it.final == AttendanceStatus.PRESENT }; val excused = entries.count { it.final == AttendanceStatus.EXCUSED }; val unexcused = entries.count { it.final == AttendanceStatus.UNEXCUSED }; val total = entries.size.coerceAtLeast(1)
+    LazyColumn(contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        item { Text("Статистика посещаемости", fontSize = 22.sp, fontWeight = FontWeight.Bold) }
+        item { Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) { StatCard("Присутствуют", present, Color(0xFF2E8B57), Modifier.weight(1f)); StatCard("Уважительная", excused, Color(0xFFB7791F), Modifier.weight(1f)); StatCard("Неуважительная", unexcused, Color(0xFFC2413B), Modifier.weight(1f)) } }
+        item { Card(Modifier.fillMaxWidth()) { Column(Modifier.padding(18.dp)) { Text("Посещаемость группы", fontWeight = FontWeight.Bold); Spacer(Modifier.height(8.dp)); LinearProgressIndicator({ present.toFloat() / total }, Modifier.fillMaxWidth(), color = Color(0xFF2E8B57)); Text("${present * 100 / total}% · порог 75%", Modifier.padding(top = 8.dp), color = MaterialTheme.colorScheme.onSurfaceVariant) } } }
+        items(entries) { e -> ListItem(headlineContent = { Text(e.name) }, supportingContent = { Text("${e.unexcused} неув. · ${e.excused} уваж.") }, trailingContent = { Text(e.final.label, color = e.final.color, fontWeight = FontWeight.Bold) }) }
     }
 }
+
+@Composable private fun StatCard(label: String, value: Int, color: Color, modifier: Modifier) { Card(modifier) { Column(Modifier.padding(12.dp)) { Text(value.toString(), color = color, fontSize = 24.sp, fontWeight = FontWeight.Bold); Text(label, fontSize = 11.sp) } } }
+
+@Composable private fun RequestsView(role: UserRole, notice: (String) -> Unit) { LazyColumn(contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) { item { Text("Заявки на регистрацию", fontSize = 22.sp, fontWeight = FontWeight.Bold) }; items(listOf("Зайцев Кирилл · Студент", "Громов Павел · Учитель", "Фёдоров Игорь · Куратор")) { request -> Card { Row(Modifier.fillMaxWidth().padding(12.dp), verticalAlignment = Alignment.CenterVertically) { Text(request, Modifier.weight(1f)); TextButton(onClick = { notice("Заявка одобрена") }) { Text("Одобрить") } } } } } }
+
+@Composable private fun ArchiveView(archive: List<ArchivedLesson>) { LazyColumn(contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) { item { Text("Архив занятий", fontSize = 22.sp, fontWeight = FontWeight.Bold) }; if (archive.isEmpty()) item { Text("Архив пуст — закрытые занятия появятся здесь", color = MaterialTheme.colorScheme.onSurfaceVariant) }; items(archive) { lesson -> Card { ListItem(headlineContent = { Text("${lesson.date} · ${lesson.subject}") }, supportingContent = { Text("${lesson.group} · ${lesson.students} студентов · Куратор: ${lesson.curator}") }) } } } }

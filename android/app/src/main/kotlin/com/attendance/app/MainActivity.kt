@@ -13,48 +13,12 @@ import com.attendance.app.ui.theme.AttendanceTheme
 
 class MainActivity : ComponentActivity() {
     private lateinit var prefs: SharedPreferences
-
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        prefs = getSharedPreferences("attendance_prefs", MODE_PRIVATE)
-
-        setContent {
-            AttendanceTheme {
-                val savedName = prefs.getString("last_user", null)
-                val savedRole = prefs.getString("last_role", null)
-                    ?.let { runCatching { UserRole.valueOf(it) }.getOrNull() }
-
-                var currentUser by remember {
-                    mutableStateOf(
-                        if (savedName != null && savedRole != null) Pair(savedRole, savedName)
-                        else null
-                    )
-                }
-
-                if (currentUser == null) {
-                    LoginScreen(
-                        initialLogin = savedName ?: "",
-                        initialRole  = savedRole ?: UserRole.HEADMAN,
-                        onLogin = { role, name ->
-                            currentUser = Pair(role, name)
-                            prefs.edit()
-                                .putString("last_user", name)
-                                .putString("last_role", role.name)
-                                .apply()
-                        }
-                    )
-                } else {
-                    AttendanceScreen(
-                        role     = currentUser!!.first,
-                        userName = currentUser!!.second,
-                        onLogout = {
-                            currentUser = null
-                            prefs.edit().remove("last_user").remove("last_role").apply()
-                        }
-                    )
-                }
-            }
-        }
+        super.onCreate(savedInstanceState); enableEdgeToEdge(); prefs = getSharedPreferences("attendance_prefs", MODE_PRIVATE)
+        setContent { AttendanceTheme {
+            var current by remember { mutableStateOf<Pair<UserRole, String>?>(null) }
+            if (current == null) LoginScreen { role, name -> current = role to name }
+            else AttendanceScreen(current!!.first, current!!.second) { current = null; prefs.edit().clear().apply() }
+        } }
     }
 }
