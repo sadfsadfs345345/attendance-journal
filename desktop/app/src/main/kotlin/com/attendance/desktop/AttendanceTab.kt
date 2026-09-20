@@ -25,7 +25,7 @@ val STATUS_FULL = listOf("Присутствует", "Уважительная",
 val STATUS_COLORS = listOf(Color(0xFF388E3C), Color(0xFFFFA000), Color(0xFFD32F2F))
 
 @Composable
-fun AttendanceTab() {
+fun AttendanceTab(onLessonClosed: (ArchivedLesson) -> Unit = {}) {
     val today   = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date())
     var subject by remember { mutableStateOf("Математика") }
     var selDate by remember { mutableStateOf(today) }
@@ -33,6 +33,7 @@ fun AttendanceTab() {
     val students = remember { AppSettings.getStudents().mapIndexed { i, n -> DemoStudent(i + 1, n) } }
     val records  = remember { mutableStateMapOf<Int, Int>() }
     val attendanceKey = remember(selDate, subject) { AppSettings.attendanceKey(selDate, subject) }
+    var closed by remember(attendanceKey) { mutableStateOf(false) }
     LaunchedEffect(attendanceKey, students) {
         records.clear()
         students.forEach { student -> AppSettings.getAttendance(attendanceKey, student.id)?.let { records[student.id] = it } }
@@ -84,6 +85,7 @@ fun AttendanceTab() {
                             val sel = records[student.id] == si
                             FilterChip(
                                 selected = sel,
+                                enabled = !closed,
                                 onClick = {
                                     if (sel) { records.remove(student.id); AppSettings.saveAttendance(attendanceKey, student.id, null) }
                                     else { records[student.id] = si; AppSettings.saveAttendance(attendanceKey, student.id, si) }
@@ -135,6 +137,11 @@ fun AttendanceTab() {
                     }
                 }.onFailure { saveMsg = "Ошибка: ${it.message}" }
             }) { Text("Экспорт CSV") }
+            OutlinedButton(onClick = {
+                onLessonClosed(ArchivedLesson(selDate, subject, "ИС-21", students.size, "Демо-куратор"))
+                closed = true
+                saveMsg = "✓ Занятие закрыто и добавлено в архив"
+            }, enabled = !closed) { Text(if (closed) "Занятие закрыто" else "Закрыть занятие") }
 
             if (saveMsg.isNotEmpty())
                 Text(saveMsg, fontSize = 12.sp,
