@@ -49,4 +49,25 @@ object AppSettings {
         if (status == null) prefs.remove("$key.$studentId")
         else prefs.putInt("$key.$studentId", status)
     }
+
+    /** Closed lessons are stored locally so the archive survives app restarts. */
+    fun getArchivedLessons(): List<ArchivedLesson> {
+        val raw = prefs.get("archived_lessons", "")
+        if (raw.isBlank()) return emptyList()
+        return raw.lineSequence().mapNotNull { line ->
+            val parts = line.split("\u001F")
+            if (parts.size != 5) null else parts[0].let { date ->
+                ArchivedLesson(date, parts[1], parts[2], parts[3].toIntOrNull() ?: 0, parts[4])
+            }
+        }.toList()
+    }
+
+    fun saveArchivedLesson(lesson: ArchivedLesson) {
+        val encoded = listOf(lesson.date, lesson.subject, lesson.group, lesson.students.toString(), lesson.curator)
+            .joinToString("\u001F")
+        val existing = prefs.get("archived_lessons", "")
+        if (existing.lineSequence().none { it == encoded }) {
+            prefs.put("archived_lessons", listOf(existing, encoded).filter { it.isNotBlank() }.joinToString("\n"))
+        }
+    }
 }

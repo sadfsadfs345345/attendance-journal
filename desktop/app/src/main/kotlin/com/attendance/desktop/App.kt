@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 fun App() {
     var selectedTab by remember { mutableStateOf(0) }
     var darkTheme   by remember { mutableStateOf(AppSettings.darkTheme) }
+    var archive     by remember { mutableStateOf(AppSettings.getArchivedLessons()) }
 
     val lightColors = lightColorScheme(
         primary            = Color(0xFF3F51B5),   // Indigo
@@ -67,6 +68,8 @@ fun App() {
                     NavigationRailItem(selected = selectedTab==2, onClick = { selectedTab=2 },
                         icon = { Icon(Icons.Default.Group, null) }, label = { Text("Студенты") })
                     NavigationRailItem(selected = selectedTab==3, onClick = { selectedTab=3 },
+                        icon = { Icon(Icons.Default.Archive, null) }, label = { Text("Архив") })
+                    NavigationRailItem(selected = selectedTab==4, onClick = { selectedTab=4 },
                         icon = { Icon(Icons.Default.Settings, null) }, label = { Text("Настройки") })
                 }
 
@@ -75,10 +78,14 @@ fun App() {
 
                 Box(Modifier.fillMaxSize().padding(28.dp)) {
                     when (selectedTab) {
-                        0 -> AttendanceTab()
+                        0 -> AttendanceTab(onLessonClosed = { lesson ->
+                            AppSettings.saveArchivedLesson(lesson)
+                            archive = AppSettings.getArchivedLessons()
+                        })
                         1 -> StatisticsTab()
                         2 -> StudentsTab()
-                        3 -> SettingsTab(onThemeChange = { darkTheme = it })
+                        3 -> ArchiveTab(archive)
+                        4 -> SettingsTab(onThemeChange = { darkTheme = it })
                     }
                 }
             }
